@@ -15,10 +15,10 @@ int main(void) {
 	cleardevice();
 	setlinecolor(RGB(255, 0, 0));
 	//画头部弧  X=0.438米  Y=0.484米  X=0.432米  Y=0.576米  X=0.383米  Y=0.653米 
-	int x=  convert(258, 519, 400, 225).x;
-	int y = convert(258, 519, 400, 225).y;
-	double m = atan((136.0-263.0)/(520.0-385.0));
-	double n = atan((136.0 - 263.0) / (520.0 - 385.0));
+	//int x=  convert(253, 677, 400, 225).x;
+	//int y = convert(253, 677, 400, 225).y;
+	//double m = atan((136.0-263.0)/(520.0-385.0));
+	//double n = atan((136.0 - 263.0) / (520.0 - 385.0));
 	drawrabbit(400,225,1.0);
 
 
@@ -35,11 +35,55 @@ int main(void) {
 void Cirthree(double X1, double Y1, double X2, double Y2, double X3, double Y3,double rongcha) {
 	//判断第一个点与第二个点的位置，确定是顺时针画还是逆时针画
 	//一三象限顺时针
-	if (((X2 - X1) > 0 && (Y2 - Y1) > 0) || ((X2 - X1) < 0 && (Y2 - Y1) < 0)) {
+	int quadrant1 = 0;//第二点相对于第一个点的象限位置
+	int quadrant2 = 0;//第三个点相对于第二个点的象限位置
+	//确定前两个点相对象限位置
+	if (((X2 - X1) > 0 && (Y2 - Y1) < 0))
+	{
+		quadrant1 = 1;
+	}
+	if ((X2 - X1) < 0 && (Y2 - Y1) < 0)
+	{
+		quadrant1 = 2;
+	}
+	if (((X2 - X1) < 0 && (Y2 - Y1) > 0))
+	{
+		quadrant1 = 3;
+	}
+	if (((X2 - X1) > 0 && (Y2 - Y1) > 0))
+	{
+		quadrant1 = 4;
+	}
+	//确定后两个点相对象限位置
+	if (((X3 - X2) > 0 && (Y3 - Y2) < 0))
+	{
+		quadrant2 = 1;
+	}
+	if ((X3 - X2) < 0 && (Y3 - Y2) < 0)
+	{
+		quadrant2 = 2;
+	}
+	if (((X3 - X2) < 0 && (Y3 - Y2) > 0))
+	{
+		quadrant2 = 3;
+	}
+	if (((X3 - X2) > 0 && (Y3 - Y2) > 0))
+	{
+		quadrant2 = 4;
+	}
+
+	if (quadrant1==1&&quadrant2==1|| quadrant1 == 2 && quadrant2 == 1 
+		|| quadrant1 == 2 && quadrant2 == 4
+		|| quadrant1 == 3 && quadrant2 == 2 || quadrant1 == 4 && quadrant2 == 3
+		|| quadrant1 == 4 && quadrant2 == 4) {
 		Cirshun(X1, Y1, X2, Y2, X3, Y3,rongcha);
 	}
 	//二四象限逆时针
-	if (((X2 - X1) > 0 && (Y2 - Y1) < 0) || ((X2 - X1) < 0 && (Y2 - Y1) > 0)) {
+	if (quadrant1 == 1 && quadrant2 == 2 || quadrant1 ==1  && quadrant2 == 3
+		|| quadrant1 == 1 && quadrant2 == 4 || quadrant1 == 2 && quadrant2 == 2
+		|| quadrant1 == 2 && quadrant2 == 3 || quadrant1 == 3 && quadrant2 == 1
+		|| quadrant1 == 3 && quadrant2 == 3 || quadrant1 == 3 && quadrant2 == 4
+		|| quadrant1 == 4 && quadrant2 == 1 || quadrant1 == 4 && quadrant2 == 2) {
 		Cirni(X1, Y1, X2, Y2, X3, Y3,rongcha);
 	}
 }
@@ -68,12 +112,17 @@ void Cirni(double X1, double Y1, double X2, double Y2, double X3, double Y3,doub
 	double hudu1 = HuDu(x, y, X1, Y1)-rongcha;//start hudu
 	double hudu2 = HuDu(x, y, X3, Y3) +rongcha;//end hudu
 	double hudu3 = 0.0;
-	if (hudu1>hudu2)
+	if (hudu1>=hudu2)
 	{
-		hudu3 = hudu1;
-		hudu1 = hudu2;
-		hudu2 = hudu3;
+		hudu2+2 * acos(-1);
 	}
+	//else//弧度大还要逆时针转那就小角加2π喽
+	//{
+	//	hudu3 = hudu1;
+	//	hudu1 = hudu2;
+	//	hudu2 = hudu3 + 2 * acos(-1);
+
+	//}
 	arc(x + r, y + r, x - r, y - r, hudu1, hudu2 );
 	//line(X1,Y1,X2,Y2);
 }
@@ -98,15 +147,22 @@ void Cirshun(double X1, double Y1, double X2, double Y2, double X3, double Y3, d
 	//求半径
 	double r = (double)sqrt(pow((X1 - x), 2) + pow((Y1 - y), 2));
 	//求弧度需要分四个象限进行求 以圆心为原点 判断点相对于圆点的符号
-	//画圆弧  由于测量坐标与绘图坐标坐标轴不同，弧度相差π/2
-	double hudu1 = HuDu(x, y, X1, Y1) - rongcha;//start hudu
-	double hudu2 = HuDu(x, y, X3, Y3) +rongcha;//end hudu
+	//画圆弧 
+	double hudu1 =HuDu(x, y, X1, Y1) - rongcha;//start hudu
+	double hudu2 =HuDu(x, y, X3, Y3) +rongcha;//end hudu
 	double hudu3 = 0.0;
-	if (hudu1 > hudu2)
+	if (hudu1 >= hudu2)
 	{
 		hudu3 = hudu1;
 		hudu1 = hudu2;
 		hudu2 = hudu3;
+	}
+	else//弧度小还要顺时针转那就小角加2π喽
+	{
+		hudu3 = hudu1;
+		hudu1 = hudu2;
+		hudu2 = hudu3+2*acos(-1);
+
 	}
 	arc(x - r, y - r, x + r, y + r, hudu1, hudu2);
 	//line(X1,Y1,X2,Y2);
@@ -155,7 +211,7 @@ double HuDu(double x0, double y0, double x1, double y1) {
 		double hudu =PI-atan((y1 - y0) / (x1 - x0));
 		return hudu;
 	}
-	if (((x1 < x0) && (y1 > y0)));//第三象限内
+	if (((x1 < x0) && (y1 > y0)))//第三象限内
 	{
 		double hudu = (double)3 * (acos(-1)) / 2 - atan(abs((int)((y1 - y0) / (x1 - x0))));
 		return hudu;
@@ -220,7 +276,11 @@ void drawrabbit(double x, double y, double scale) {
 	// X=0.438米  Y=0.484米  X=0.432米  Y=0.576米  X=0.383米  Y=0.653米
 	Cirthree(convert(438, 484, x, y).x, convert(438, 484, x, y).y, convert(432, 576, x, y).x, convert(432, 576, x, y).y, convert(383, 653, x, y).x, convert(383, 653, x, y).y, 0.0);
 	Sleep(delay);
-	//
+	//X=0.383米  Y=0.653米   X=0.341米  Y=0.676米   X=0.253米  Y=0.677米 
+	Cirthree(convert(253, 677, x, y).x, convert(253, 677, x, y).y, convert(341, 676, x, y).x, convert(341, 676, x, y).y, convert(383, 653, x, y).x, convert(383, 653, x, y).y, 0.0);
+	Sleep(delay);
+
+
 
 }
 POINT  convert(double x, double y, double X, double Y) {
