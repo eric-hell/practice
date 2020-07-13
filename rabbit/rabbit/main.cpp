@@ -1,6 +1,10 @@
 #include<graphics.h>
 #include<Windows.h>
 #include<math.h>
+#include<string>
+#include<iostream>
+#include <conio.h>
+using namespace std;
 void Cirni(double X1, double Y1, double X2, double Y2, double X3, double Y3, double hudu1, double hudu2);
 void Cirshun(double X1, double Y1, double X2, double Y2, double X3, double Y3, double hudu1, double hudu2);
 void Cirthree(double X1, double Y1, double X2, double Y2, double X3, double Y3, double hudu1, double hudu2);
@@ -9,19 +13,22 @@ double Cross(double X1, double Y1, double X2, double Y2, double X3, double Y3);
 void drawrabbit(double x, double y, double scale);
 double angle_to_radian(double degree, double min, double second);
 POINT convert(double x, double y, double X, double Y);
-int BoundaryFill(int x, int y, int r, int g, int b);
-void FillLeftEar(int x, int y, int r, int g, int b);
-void FillRightEar(int x, int y, int r, int g, int b);
-void FillCarrot(int x, int y, int r, int g, int b);
-void FillLeaf(int x, int y, int r, int g, int b);
-void FillCheeks(int x, int y, int r, int g, int b);
-void FillEyes(int x, int y, int r, int g, int b);
-void FillNose(int x, int y, int r, int g, int b);
-void FillMouth(int x, int y, int r, int g, int b);
-void FillFoots(int x, int y, int r, int g, int b);
+int BoundaryFill(int x, int y, COLORREF rgb);
+void FillLeftEar(int x, int y, COLORREF rgb);
+void FillRightEar(int x, int y, COLORREF rgb);
+void FillCarrot(int x, int y, COLORREF rgb);
+void FillLeaf(int x, int y, COLORREF rgb);
+void FillCheeks(int x, int y, COLORREF rgb);
+void FillEyes(int x, int y, COLORREF rgb);
+void FillNose(int x, int y, COLORREF rgb);
+void FillMouth(int x, int y, COLORREF rgb);
+void FillFoots(int x, int y, COLORREF rgb);
+void SetColorCard(int x, int y);
+void GameStart(int x,int y);
+void DelText();
 int main(void) {
 	//初始化图形
-	initgraph(800, 600);
+	initgraph(1200, 700);
 	//设置背景为白色
 	setbkcolor(RGB(255, 255, 255));
 	cleardevice();
@@ -33,10 +40,9 @@ int main(void) {
 	//double n = atan((136.0 - 263.0) / (520.0 - 385.0));
 	//FillCheeks(400, 225, 254, 204, 203);
 	//Sleep(10000);
-
-	drawrabbit(400, 225, 1);
-
-
+	drawrabbit(300, 300, 1);
+	SetColorCard(600,50);
+	GameStart(300,300);
 
 	system("pause");
 	return 0;
@@ -744,25 +750,25 @@ void drawrabbit(double x, double y, double scale) {
 	Sleep(delay);
 
 
-	//填色
-	FillLeftEar(x,y,255,209,207);
-	Sleep(delay);
-	FillRightEar(x, y, 255, 209, 207);
-	Sleep(delay);
-	FillCarrot(x,y,238,95,0);
-	Sleep(delay);
-	FillLeaf(x,y,1,155,69);
-	Sleep(delay);
-	FillEyes(x,y,0,0,0);
-	Sleep(delay);
-	FillCheeks(x,y,254,204,203);
-	Sleep(delay);
-	FillNose(x,y,62,11,16);
-	Sleep(delay);
-	FillMouth(x,y,251,152,147);
-	Sleep(delay);
-	FillFoots(x,y,255,208,202);
-	Sleep(delay);
+	////填色
+	//FillLeftEar(x,y,255,209,207);
+	//Sleep(delay);
+	//FillRightEar(x, y, 255, 209, 207);
+	//Sleep(delay);
+	//FillCarrot(x,y,238,95,0);
+	//Sleep(delay);
+	//FillLeaf(x,y,1,155,69);
+	//Sleep(delay);
+	//FillEyes(x,y,0,0,0);
+	//Sleep(delay);
+	//FillCheeks(x,y,254,204,203);
+	//Sleep(delay);
+	//FillNose(x,y,62,11,16);
+	//Sleep(delay);
+	//FillMouth(x,y,251,152,147);
+	//Sleep(delay);
+	//FillFoots(x,y,255,208,202);
+	//Sleep(delay);
 
 }
 /// <summary>
@@ -836,20 +842,20 @@ double Cross(double X1, double Y1, double X2, double Y2, double X3, double Y3) {
 /// <param name="g">G</param>
 /// <param name="b">B</param>
 /// <returns></returns>
-int BoundaryFill(int x, int y,int r,int g,int b)
+int BoundaryFill(int x, int y, COLORREF rgb)
 {
 	int c = 0;
 	c = getpixel(x, y);
-	if (c != RGB(r,g,b))
+	if (c != rgb)
 	{
-		putpixel(x, y, RGB(r, g, b));
+		putpixel(x, y, rgb);
 	}
-	if (c == RGB(r, g, b))
+	if (c == rgb)
 		return 0;
-	BoundaryFill(x + 1, y, r, g, b);
-	BoundaryFill(x - 1, y, r, g, b);
-	BoundaryFill(x, y + 1, r, g, b);
-	BoundaryFill(x, y - 1, r, g, b);
+	BoundaryFill(x + 1, y, rgb);
+	BoundaryFill(x - 1, y, rgb);
+	BoundaryFill(x, y + 1, rgb);
+	BoundaryFill(x, y - 1, rgb);
 }
  /// <summary>
  /// 填充左耳朵颜色
@@ -859,12 +865,12 @@ int BoundaryFill(int x, int y,int r,int g,int b)
  /// <param name="r">R</param>
  /// <param name="g">G</param>
  /// <param name="b">B</param>
- void FillLeftEar(int x,int y, int r, int g, int b){
+ void FillLeftEar(int x,int y, COLORREF rgb){
 	/* 先绘制颜色填充的*/
 		/*左边耳朵颜色填充*/
 		setlinestyle(PS_SOLID, 5);
 		//设置线色
-		setlinecolor(RGB(r, g, b));
+		setlinecolor(rgb);
 		//直线 X=0.445米  Y=0.436米    X=0.451米  Y=0.453米 
 		line(convert(445, 436, x, y).x, convert(445, 436, x, y).y, convert(451, 453, x, y).x, convert(451, 453, x, y).y);
 		//X=0.445米  Y=0.436米  X=0.420米  Y=0.440米
@@ -875,7 +881,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 		Cirthree(convert(432, 461, x, y).x, convert(432, 461, x, y).y, convert(427, 451, x, y).x, convert(427, 451, x, y).y, convert(420, 440, x, y).x, convert(420, 440, x, y).y,
 			angle_to_radian(338, 16, 33.76), angle_to_radian(320, 18, 27.11));
 		//填充颜色 X=0.437米  Y=0.447米 
-		BoundaryFill(convert(437, 447, x, y).x, convert(437, 447, x, y).y,r,g,b);
+		BoundaryFill(convert(437, 447, x, y).x, convert(437, 447, x, y).y,rgb);
 		//设置线型
 		setlinestyle(PS_SOLID, 5);
 		//设置线色
@@ -897,11 +903,11 @@ int BoundaryFill(int x, int y,int r,int g,int b)
  /// <param name="r">R</param>
  /// <param name="g">G</param>
  /// <param name="b">B</param>
- void FillRightEar(int x,int y, int r, int g, int b) {
+ void FillRightEar(int x,int y, COLORREF rgb) {
 	/* 右边耳朵颜色填充*/
 	setlinestyle(PS_SOLID, 5);
 	//设置线色
-	setlinecolor(RGB(r, g, b));
+	setlinecolor(rgb);
 	//直线  X=0.378米  Y=0.686米  X=0.362米  Y=0.696米 
 	line(convert(378, 686, x, y).x, convert(378, 686, x, y).y, convert(362, 696, x, y).x, convert(362, 696, x, y).y);
 	//
@@ -913,7 +919,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	Cirthree(convert(365, 665, x, y).x, convert(365, 665, x, y).y, convert(354, 671, x, y).x, convert(354, 671, x, y).y, convert(341, 676, x, y).x, convert(341, 676, x, y).y,
 		angle_to_radian(59, 45, 41.34), angle_to_radian(70, 36, 34.68));
 	//填充颜色  X=0.363米  Y=0.679米  
-	BoundaryFill(convert(363, 679, x, y).x, convert(363, 679, x, y).y,r,g,b);
+	BoundaryFill(convert(363, 679, x, y).x, convert(363, 679, x, y).y,rgb);
 	//设置线型
 	setlinestyle(PS_SOLID, 5);
 	//设置线色
@@ -937,11 +943,11 @@ int BoundaryFill(int x, int y,int r,int g,int b)
  /// <param name="r">R</param>
  /// <param name="g">G</param>
  /// <param name="b">B</param>
- void FillCarrot(int x, int y, int r, int g, int b) {
+ void FillCarrot(int x, int y, COLORREF rgb) {
 	/* 胡萝卜填充*/
 		setlinestyle(PS_SOLID, 5);
 		//设置线色
-		setlinecolor(RGB(r, g, b));
+		setlinecolor(rgb);
 		Cirthree(convert(182, 445, x, y).x, convert(182, 445, x, y).y, convert(196, 443, x, y).x, convert(196, 443, x, y).y, convert(208, 455, x, y).x, convert(208, 455, x, y).y,
 			angle_to_radian(235, 10, 22.8), angle_to_radian(347, 4, 4.18));//前加减小 后减减小
 			//X=0.208米  Y=0.455米  X=0.204米  Y=0.485米    X=0.202米  Y=0.488米 352度52分48.42秒 27度1分47.81秒
@@ -972,7 +978,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 		Cirthree(convert(180, 456, x, y).x, convert(180, 456, x, y).y, convert(175, 461, x, y).x, convert(175, 461, x, y).y, convert(162, 458, x, y).x, convert(162, 458, x, y).y,
 			angle_to_radian(22, 59, 33.74), angle_to_radian(143, 0, 4.64));//前加减小 后减减小
 		//填充颜色   X=0.178米  Y=0.497米
-			BoundaryFill(convert(178, 497, x, y).x, convert(178, 497, x, y).y,r,g,b);
+			BoundaryFill(convert(178, 497, x, y).x, convert(178, 497, x, y).y,rgb);
 			//设置线型
 			setlinestyle(PS_SOLID, 5);
 			//设置线色
@@ -1015,11 +1021,11 @@ int BoundaryFill(int x, int y,int r,int g,int b)
  /// <param name="r">R</param>
  /// <param name="g">G</param>
  /// <param name="b">B</param>
- void FillLeaf(int x, int y, int r, int g, int b) {
+ void FillLeaf(int x, int y, COLORREF rgb) {
 	 //绿叶填充
 	 setlinestyle(PS_SOLID, 5);
 	 	//设置线色
-	 	setlinecolor(RGB(r, g, b));
+	 	setlinecolor(rgb);
 	 //绿叶
 	 	//11  X=0.195米  Y=0.555米 X=0.204米  Y=0.565米 X=0.206米  Y=0.578米 304度0分44.27秒 2度14分2.70秒
 	 Cirthree(convert(195, 555, x, y).x, convert(195, 555, x, y).y, convert(204, 565, x, y).x, convert(204, 565, x, y).y, convert(206, 578, x, y).x, convert(206, 578, x, y).y,
@@ -1037,7 +1043,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 		 Cirthree(convert(199, 551, x, y).x, convert(199, 551, x, y).y, convert(189, 558, x, y).x, convert(189, 558, x, y).y, convert(177, 559, x, y).x, convert(177, 559, x, y).y,
 		 	angle_to_radian(39, 26, 10.94) , angle_to_radian(100, 12, 16.85));//前加减小 后减减小
 	 //填充颜色    X=0.188米  Y=0.571米 
-			 BoundaryFill(convert(188, 571, x, y).x, convert(188, 571, x, y).y,r,g,b);
+			 BoundaryFill(convert(188, 571, x, y).x, convert(188, 571, x, y).y,rgb);
 			 //设置线型
 			 setlinestyle(PS_SOLID, 5);
 			 //设置线色
@@ -1067,10 +1073,10 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 /// <param name="r">R</param>
 /// <param name="g">G</param>
 /// <param name="b">B</param>
- void FillEyes(int x, int y, int r, int g, int b) {
+ void FillEyes(int x, int y, COLORREF rgb) {
 	 setlinestyle(PS_SOLID, 3);
 	 //设置线色
-	 setlinecolor(RGB(r, g, b));
+	 setlinecolor(rgb);
 	 //左眼
 	//14   X=0.320米  Y=0.476米 X=0.333米  Y=0.485米  X=0.336米  Y=0.493米 285度34分1.95秒 348度7分58.59秒
 	 Cirthree(convert(320, 476, x, y).x, convert(320, 476, x, y).y, convert(333, 485, x, y).x, convert(333, 485, x, y).y, convert(336, 493, x, y).x, convert(336, 493, x, y).y,
@@ -1098,7 +1104,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(320, 476, x, y).x, convert(320, 476, x, y).y, convert(304, 441, x, y).x, convert(304, 441, x, y).y, convert(301, 480, x, y).x, convert(301, 480, x, y).y,
 		 angle_to_radian(49, 25, 12.66) + 0.3, angle_to_radian(107, 52, 9.2) + 0.5);//前加减小 后减减小
 	  //填充颜色    X=0.311米  Y=0.488米
-	 BoundaryFill(convert(311, 488, x, y).x, convert(311, 488, x, y).y, r, g, b);
+	 BoundaryFill(convert(311, 488, x, y).x, convert(311, 488, x, y).y,rgb);
 	 Sleep(100);
 
 	 //右眼
@@ -1124,7 +1130,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(281, 594, x, y).x, convert(281, 594, x, y).y, convert(242, 587, x, y).x, convert(242, 587, x, y).y, convert(270, 576, x, y).x, convert(270, 576, x, y).y,
 		 angle_to_radian(357, 25, 51.22) - 0.2, angle_to_radian(296, 58, 46.19));//前加减小 后减减小
 	   //填充颜色    X=0.282米  Y=0.579米 
-	 BoundaryFill(convert(282, 579, x, y).x, convert(282, 579, x, y).y, r, g, b);
+	 BoundaryFill(convert(282, 579, x, y).x, convert(282, 579, x, y).y, rgb);
  }
  /// <summary>
 /// 填充腮帮颜色
@@ -1134,10 +1140,12 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 /// <param name="r">R</param>
 /// <param name="g">G</param>
 /// <param name="b">B</param>
- void FillCheeks(int x, int y, int r, int g, int b) {
+ void FillCheeks(int x, int y, COLORREF rgb) {
+	 //逆时针 弧度1增加线开头变短 弧度2减小 末尾线变短
+	 //顺时针 弧度1减小线开头变短 弧度2增加 末尾线变短
 	 setlinestyle(PS_SOLID, 3);
 	 //设置线色
-	 setlinecolor(RGB(r, g, b));
+	 setlinecolor(rgb);
 	 //左腮
 	 //17   X=0.301米  Y=0.480米   X=0.314米  Y=0.474米  X=0.320米  Y=0.476米 222度52分32.60秒 294度24分49.26秒
 	 Cirthree(convert(301, 480, x, y).x, convert(301, 480, x, y).y, convert(314, 474, x, y).x, convert(314, 474, x, y).y, convert(320, 476, x, y).x, convert(320, 476, x, y).y,
@@ -1145,9 +1153,9 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	//18
 	//X=0.320米  Y=0.476米 X=0.304米  Y=0.441米   X=0.301米  Y=0.480米  49度25分12.66秒 107度52分9.20秒
 	 Cirthree(convert(320, 476, x, y).x, convert(320, 476, x, y).y, convert(304, 441, x, y).x, convert(304, 441, x, y).y, convert(301, 480, x, y).x, convert(301, 480, x, y).y,
-		 angle_to_radian(49, 25, 12.66) + 0.3, angle_to_radian(107, 52, 9.2) + 0.3);//前加减小 后减减小
+		 angle_to_radian(49, 25, 12.66) + 0.35, angle_to_radian(107, 52, 9.2) + 0.3);//前加减小 后减减小
 	   //填充颜色    X=0.303米  Y=0.455米
-	 BoundaryFill(convert(303, 455, x, y).x, convert(303, 455, x, y).y, r, g, b);
+	 BoundaryFill(convert(303, 455, x, y).x, convert(303, 455, x, y).y,rgb);
 	 Sleep(100);
 
 	 //右腮
@@ -1158,7 +1166,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(281, 594, x, y).x, convert(281, 594, x, y).y, convert(242, 587, x, y).x, convert(242, 587, x, y).y, convert(270, 576, x, y).x, convert(270, 576, x, y).y,
 		 angle_to_radian(357, 25, 51.22) - 0.2, angle_to_radian(296, 58, 46.19));//前加减小 后减减小
 		//填充颜色    : X=0.257米  Y=0.586米  
-	 BoundaryFill(convert(257, 586, x, y).x, convert(257, 586, x, y).y, r, g, b);
+	 BoundaryFill(convert(257, 586, x, y).x, convert(257, 586, x, y).y, rgb);
  }
  /// <summary>
 /// 填充鼻子颜色
@@ -1168,10 +1176,10 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 /// <param name="r">R</param>
 /// <param name="g">G</param>
 /// <param name="b">B</param>
- void FillNose(int x, int y, int r, int g, int b) {
+ void FillNose(int x, int y, COLORREF rgb) {
 	 setlinestyle(PS_SOLID, 3);
 	 //设置线色
-	 setlinecolor(RGB(r, g, b));
+	 setlinecolor(rgb);
 	 //26 
 	//X=0.298米  Y=0.525米  X=0.308米  Y=0.537米  X=0.293米  Y=0.541米  263度22分18.66秒 130度13分16.69秒
 	 Cirthree(convert(298, 525, x, y).x, convert(298, 525, x, y).y, convert(308, 537, x, y).x, convert(308, 537, x, y).y, convert(293, 541, x, y).x, convert(293, 541, x, y).y,
@@ -1181,7 +1189,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(299, 525, x, y).x, convert(299, 525, x, y).y, convert(295, 531, x, y).x, convert(295, 531, x, y).y, convert(296, 543, x, y).x, convert(293, 543, x, y).y,
 		 angle_to_radian(229, 4, 22.3), angle_to_radian(150, 0, 22.36) - 0.5);//前加减小 后减减小
 			//填充颜色    X=0.301米  Y=0.533米
-	 BoundaryFill(convert(301, 533, x, y).x, convert(301, 533, x, y).y, r, g, b);
+	 BoundaryFill(convert(301, 533, x, y).x, convert(301, 533, x, y).y, rgb);
  }
  /// <summary>
 /// 填充嘴巴颜色
@@ -1191,10 +1199,10 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 /// <param name="r">R</param>
 /// <param name="g">G</param>
 /// <param name="b">B</param>
- void FillMouth(int x, int y, int r, int g, int b) {
+ void FillMouth(int x, int y, COLORREF rgb) {
 	 setlinestyle(PS_SOLID, 3);
 	 //设置线色
-	 setlinecolor(RGB(r, g, b));
+	 setlinecolor(rgb);
 	 //28 
 	//X=0.294米  Y=0.533米  X=0.284米  Y=0.514米  X=0.290米  Y=0.499米  122度50分28.32秒 223度27分28.35秒
 	 Cirthree(convert(294, 533, x, y).x, convert(294, 533, x, y).y, convert(284, 514, x, y).x, convert(284, 514, x, y).y, convert(290, 499, x, y).x, convert(290, 499, x, y).y,
@@ -1212,7 +1220,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(280, 540, x, y).x, convert(280, 540, x, y).y, convert(268, 534, x, y).x, convert(268, 534, x, y).y, convert(259, 521, x, y).x, convert(259, 521, x, y).y,
 		 angle_to_radian(103, 26, 12.32), angle_to_radian(162, 30, 12.91));//前加减小 后减减小
 	// X=0.277米  Y=0.526米  
-	 BoundaryFill(convert(277, 526, x, y).x, convert(277, 526, x, y).y, r, g, b);
+	 BoundaryFill(convert(277, 526, x, y).x, convert(277, 526, x, y).y, rgb);
 	 //设置线型
 	 setlinestyle(PS_SOLID, 3);
 	 //设置线色
@@ -1242,10 +1250,10 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 /// <param name="r">R</param>
 /// <param name="g">G</param>
 /// <param name="b">B</param>
- void FillFoots(int x, int y, int r, int g, int b) {
+ void FillFoots(int x, int y, COLORREF rgb) {
 	 setlinestyle(PS_SOLID, 3);
 	 //设置线色
-	 setlinecolor(RGB(r, g, b));
+	 setlinecolor(rgb);
 
 	 //左脚
 		 // X=0.102米  Y=0.353 X=0.095米  Y=0.352米 X=0.090米  Y=0.363米  297度41分28.87秒 161度26分56.78秒
@@ -1255,7 +1263,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(102, 353, x, y).x, convert(102, 353, x, y).y, convert(98, 362, x, y).x, convert(98, 362, x, y).y, convert(90, 363, x, y).x, convert(90, 363, x, y).y,
 		 angle_to_radian(352, 46, 12.08), angle_to_radian(106, 22, 13.57) - 0.3);//前加减小 后减减小
 	 // X=0.096米  Y=0.358米
-	 BoundaryFill(convert(96, 358, x, y).x, convert(96, 358, x, y).y, r, g, b);
+	 BoundaryFill(convert(96, 358, x, y).x, convert(96, 358, x, y).y, rgb);
 	 Sleep(100);
 
 	 // X=0.116米  Y=0.362米 X=0.108米  Y=0.360米  X=0.101米  Y=0.367米  317度39分8.35秒 187度5分41.70秒
@@ -1265,7 +1273,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(116, 362, x, y).x, convert(116, 362, x, y).y, convert(111, 369, x, y).x, convert(111, 369, x, y).y, convert(101, 367, x, y).x, convert(101, 367, x, y).y,
 		 angle_to_radian(8, 17, 27.46), angle_to_radian(136, 27, 22.58));//前加减小 后减减小
 	 //X=0.108米  Y=0.365米
-	 BoundaryFill(convert(108, 365, x, y).x, convert(108, 365, x, y).y, r, g, b);
+	 BoundaryFill(convert(108, 365, x, y).x, convert(108, 365, x, y).y, rgb);
 	 Sleep(100);
 
 	 //X=0.117米  Y=0.376米   X=0.109米  Y=0.372米  X=0.101米  Y=0.381米 329度10分9.96秒 181度22分7.37秒
@@ -1275,7 +1283,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(117, 376, x, y).x, convert(117, 376, x, y).y, convert(111, 383, x, y).x, convert(111, 383, x, y).y, convert(101, 381, x, y).x, convert(101, 381, x, y).y,
 		 angle_to_radian(15, 26, 31.36), angle_to_radian(135, 5, 45.98));//前加减小 后减减小
 	 // X=0.108米  Y=0.378米 
-	 BoundaryFill(convert(108, 378, x, y).x, convert(108, 378, x, y).y, r, g, b);
+	 BoundaryFill(convert(108, 378, x, y).x, convert(108, 378, x, y).y, rgb);
 	 Sleep(100);
 
 	 //X=0.096米  Y=0.372米 X=0.087米  Y=0.370米  X=0.074米  Y=0.386米 299度3分38.35秒 171度38分8.91秒
@@ -1285,7 +1293,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(96, 372, x, y).x, convert(96, 372, x, y).y, convert(90, 387, x, y).x, convert(90, 387, x, y).y, convert(74, 386, x, y).x, convert(74, 386, x, y).y,
 		 angle_to_radian(343, 40, 27.29), angle_to_radian(127, 1, 19.97));//前加减小 后减减小
 	 //  X=0.084米  Y=0.379米
-	 BoundaryFill(convert(84, 379, x, y).x, convert(84, 379, x, y).y, r, g, b);
+	 BoundaryFill(convert(84, 379, x, y).x, convert(84, 379, x, y).y,rgb);
 	 Sleep(100);
 
 	 //右脚
@@ -1296,7 +1304,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(116, 642, x, y).x, convert(116, 642, x, y).y, convert(105, 645, x, y).x, convert(105, 645, x, y).y, convert(101, 638, x, y).x, convert(101, 638, x, y).y,
 		 angle_to_radian(29, 17, 54.1), angle_to_radian(175, 5, 51.02));//前加减小 后减减小
 	 // X=0.108米  Y=0.639米 
-	 BoundaryFill(convert(108, 639, x, y).x, convert(108, 639, x, y).y, r, g, b);
+	 BoundaryFill(convert(108, 639, x, y).x, convert(108, 639, x, y).y, rgb);
 	 Sleep(100);
 
 	 // X=0.115米  Y=0.659米 X=0.109米  Y=0.649米 X=0.101米  Y=0.651米 11度34分2.18秒 226度10分24.04秒
@@ -1306,7 +1314,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(115, 659, x, y).x, convert(115, 659, x, y).y, convert(105, 658, x, y).x, convert(105, 658, x, y).y, convert(101, 651, x, y).x, convert(101, 651, x, y).y,
 		 angle_to_radian(61, 48, 24.44), angle_to_radian(175, 59, 1.78));//前加减小 后减减小
 	 //  X=0.110米  Y=0.653米
-	 BoundaryFill(convert(110, 653, x, y).x, convert(110, 653, x, y).y, r, g, b);
+	 BoundaryFill(convert(110, 653, x, y).x, convert(110, 653, x, y).y,rgb);
 	 Sleep(100);
 
 	 // X=0.103米  Y=0.665米  X=0.096米  Y=0.656米  X=0.091米  Y=0.657米 7度6分59.98秒 242度31分15.10秒
@@ -1316,7 +1324,7 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(103, 665, x, y).x, convert(103, 665, x, y).y, convert(98, 667, x, y).x, convert(98, 667, x, y).y, convert(91, 657, x, y).x, convert(91, 657, x, y).y,
 		 angle_to_radian(57, 19, 9.55), angle_to_radian(192, 19, 5.54));//前加减小 后减减小
 		 //  X=0.095米  Y=0.659米
-	 BoundaryFill(convert(95, 659, x, y).x, convert(95, 659, x, y).y, r, g, b);
+	 BoundaryFill(convert(95, 659, x, y).x, convert(95, 659, x, y).y,rgb);
 	 Sleep(100);
 
 	 //  X=0.096米  Y=0.648米  X=0.085米  Y=0.630米  X=0.074米  Y=0.632米 13度3分12.91秒 239度15分54.89秒
@@ -1326,7 +1334,555 @@ int BoundaryFill(int x, int y,int r,int g,int b)
 	 Cirthree(convert(96, 648, x, y).x, convert(96, 648, x, y).y, convert(87, 650, x, y).x, convert(87, 650, x, y).y, convert(74, 632, x, y).x, convert(74, 632, x, y).y,
 		 angle_to_radian(59, 0, 34.03), angle_to_radian(193, 18, 33.76));//前加减小 后减减小
 	 //  X=0.090米  Y=0.642米
-	 BoundaryFill(convert(90, 642, x, y).x, convert(90, 642, x, y).y, r, g, b);
+	 BoundaryFill(convert(90, 642, x, y).x, convert(90, 642, x, y).y, rgb);
+ }
+ /// <summary>
+ /// 设置色卡
+ /// </summary>
+ /// <param name="x">色卡左上角横坐标</param>
+ /// <param name="y">色卡左上角纵坐标</param>
+ void SetColorCard(int x, int y) {
+	 const int wide = 5;
+	 const int height = 23;
+	 int x0 = x;
+	 int y0 = y;//保留原有信息
+	 //设置填充颜色
+	//1   DARK SKIN
+	 setfillcolor(RGB(94,28,12));
+	 POINT pts1[] = { {x, y}, {x+200, y}, {x+200, y+height}, {x, y+height} };
+	 fillpolygon(pts1, 4);
+	 y += wide;
+	 y += height;
+	 //2 LIGHT SKIN
+	 setfillcolor(RGB(241 ,149 ,108 ));
+	 POINT pts2[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts2, 4);
+	 y += wide;
+	 y += height;
+	 //3  腮帮
+	 setfillcolor(RGB(254 ,204 ,203 ));
+	 POINT pts3[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts3, 4);
+	 y += wide;
+	 y += height;
+	 //4  BLUE SKY
+	 setfillcolor(RGB(97 ,117 ,171 ));
+	 POINT pts4[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts4, 4);
+	 y += wide;
+	 y += height;
+	 //5   FOLLIAGE
+	 setfillcolor(RGB(91 ,103 ,39 ));
+	 POINT pts5[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts5, 4);
+	 y += wide;
+	 y += height;
+	 //6   BLUE FLOWER
+	 setfillcolor(RGB( 163, 131,196 ));
+	 POINT pts6[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts6, 4);
+	 y += wide;
+	 y += height;
+	 //7  BLUISH GREEN
+	 setfillcolor(RGB( 141,253 ,153 ));
+	 POINT pts7[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts7, 4);
+	 y += wide;
+	 y += height;
+	 //8   ORANGE
+	 setfillcolor(RGB(235 ,97 , 0));
+	 POINT pts8[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts8, 4);
+	 y += wide;
+	 y += height;
+	 //9  BLUE
+	 setfillcolor(RGB(1, 0, 142 ));
+	 POINT pts9[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts9, 4);
+	 y += wide;
+	 y += height;
+	 //10  MODERATE RED
+	 setfillcolor(RGB(220,30 ,42 ));
+	 POINT pts10[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts10, 4);
+	 y += wide;
+	 y += height;
+	 //11 PURPLE
+	 setfillcolor(RGB(69 , 0,69 ));
+	 POINT pts11[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts11, 4);
+	 y += wide;
+	 y += height;
+	 //12  YELLOW GREEN
+	 setfillcolor(RGB(187 , 255,20 ));
+	 POINT pts12[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts12, 4);
+	 y += wide;
+	 y += height;
+	 //13  ORANGE YELLOW
+	 setfillcolor(RGB(254 ,143 ,1 ));
+	 POINT pts13[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts13, 4);
+	 y += wide;
+	 y += height;
+	 //14  GREEN
+	 setfillcolor(RGB(65 ,173 ,36 ));
+	 POINT pts14[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts14, 4);
+	 y += wide;
+	 y += height;
+	 //height  RED
+	 setfillcolor(RGB( 204,0 , 1));
+	 POINT ptsheight[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(ptsheight, 4);
+	 y += wide;
+	 y += height;
+	 //16  YELLOW
+	 setfillcolor(RGB(255, 217,0 ));
+	 POINT pts16[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts16, 4);
+	 y += wide;
+	 y += height;
+	 //17   MAGENTA
+	 setfillcolor(RGB(207 ,3 ,124 ));
+	 POINT pts17[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts17, 4);
+	 y += wide;
+	 y += height;
+	 //18   CYAN
+	 setfillcolor(RGB(0 , 147, 190));
+	 POINT pts18[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts18, 4);
+	 y += wide;
+	 y += height;
+	 //19  DARK
+	 setfillcolor(RGB(0 ,0 ,0 ));
+	 POINT pts19[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts19, 4);
+	 y += wide;
+	 y += height;
+	 //20  耳朵
+	 setfillcolor(RGB(255 ,220 ,220 ));
+	 POINT pts20[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts20, 4);
+	 y += wide;
+	 y += height;	
+
+
+	 //第二列
+	 y = y0;
+	 x = x0 + 300;
+	 //1   鼻子
+	 setfillcolor(RGB(62, 5, 14));
+	 POINT pts21[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts21, 4);
+	 y += wide;
+	 y += height;
+	 //2 胭脂
+	 setfillcolor(RGB(157, 41, 50));
+	 POINT pts22[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts22, 4);
+	 y += wide;
+	 y += height;
+	 //3  牙白
+	 setfillcolor(RGB(239, 222, 176));
+	 POINT pts23[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts23, 4);
+	 y += wide;
+	 y += height;
+	 //4  驼色
+	 setfillcolor(RGB(168, 132, 98));
+	 POINT pts24[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts24, 4);
+	 y += wide;
+	 y += height;
+	 //5   秋香色
+	 setfillcolor(RGB(217, 182, 18));
+	 POINT pts25[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts25, 4);
+	 y += wide;
+	 y += height;
+	 //6   竹青
+	 setfillcolor(RGB(120, 146, 98));
+	 POINT pts26[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts26, 4);
+	 y += wide;
+	 y += height;
+	 //7  黛色
+	 setfillcolor(RGB(73, 65, 102));
+	 POINT pts27[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts27, 4);
+	 y += wide;
+	 y += height;
+	 //8   鸦青
+	 setfillcolor(RGB(66, 75, 80));
+	 POINT pts28[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts28, 4);
+	 y += wide;
+	 y += height;
+	 //9  檀
+	 setfillcolor(RGB(179, 109, 970));
+	 POINT pts29[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts29, 4);
+	 y += wide;
+	 y += height;
+	 //10  黛蓝
+	 setfillcolor(RGB(65, 80, 101));
+	 POINT pts30[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts30, 4);
+	 y += wide;
+	 y += height;
+	 //11 月白
+	 setfillcolor(RGB(215, 236, 241));
+	 POINT pts31[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts31, 4);
+	 y += wide;
+	 y += height;
+	 //12  水绿
+	 setfillcolor(RGB(212, 242, 232));
+	 POINT pts32[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts32, 4);
+	 y += wide;
+	 y += height;
+	 //13  炎
+	 setfillcolor(RGB(255, 51, 0));
+	 POINT pts33[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts33, 4);
+	 y += wide;
+	 y += height;
+	 //14  靛青
+	 setfillcolor(RGB(23, 124, 176));
+	 POINT pts34[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts34, 4);
+	 y += wide;
+	 y += height;
+	 //茶白
+	 setfillcolor(RGB(243, 248, 241));
+	 POINT pt35[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pt35, 4);
+	 y += wide;
+	 y += height;
+	 //16  赤
+	 setfillcolor(RGB(195, 39, 43));
+	 POINT pts36[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts36, 4);
+	 y += wide;
+	 y += height;
+	 //17   绾
+	 setfillcolor(RGB(169, 129, 117));
+	 POINT pts37[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts37, 4);
+	 y += wide;
+	 y += height;
+	 //18   嘴巴
+	 setfillcolor(RGB(255, 158, 159));
+	 POINT pts38[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts38, 4);
+	 y += wide;
+	 y += height;
+	 //19  砖红
+	 setfillcolor(RGB(156, 102, 101));
+	 POINT pts39[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts39, 4);
+	 y += wide;
+	 y += height;
+	 //20  紫罗兰
+	 setfillcolor(RGB(138, 43, 226));
+	 POINT pts40[] = { {x, y}, {x + 200, y}, {x + 200, y + height}, {x, y + height} };
+	 fillpolygon(pts40, 4);
+	 y += wide;
+	 y += height;
+ }
+ /// <summary>
+ /// 游戏开始
+ /// </summary>
+ /// <param name="x">指定横坐标</param>
+ /// <param name="y">指定纵坐标</param>
+ void GameStart(int x,int y) {
+	 settextcolor(RGB(241, 149, 108));
+	 settextstyle(40, 0, _T("楷体"));
+	 TCHAR s1[] = _T("填色游戏");
+	 outtextxy(200, 30, s1);
+	 Sleep(2000);
+	 DelText();
+	 settextcolor(RGB(241, 149, 108));
+	 settextstyle(40, 0, _T("楷体"));
+	 TCHAR s2[] = _T("点击屏幕开始游戏");
+	 outtextxy(150, 30, s2);
+	 MOUSEMSG m;		// 定义鼠标消息
+	 TCHAR s3[] = _T("根据提示选择右方色卡中的颜色");
+	 int off = 0;//判断是否左键单击 0为没有 1位有
+	 FlushMouseMsgBuffer();
+	 // 获取一条鼠标消息
+	 while (true)
+	 {
+		 // 获取一条鼠标消息
+		 m = GetMouseMsg();
+		 switch (m.uMsg)
+		 {
+		 case WM_LBUTTONDOWN:
+			 DelText();
+			 settextcolor(RGB(241, 149, 108));
+			 settextstyle(40, 0, _T("楷体"));
+			 outtextxy(10, 30, s3);
+			 off = 1;
+			 break;
+		 case WM_RBUTTONUP:
+			 ;	// 按鼠标右键退出程序
+		 }
+		 if (off==1)
+		 {
+			 break;//退出获取鼠标事件
+		 }
+	 }
+	 Sleep(2000);
+	 off = 0;
+	 DelText();
+	 TCHAR s4[] = _T("请选择耳朵的颜色");
+	 settextcolor(RGB(241, 149, 108));
+	 settextstyle(40, 0, _T("楷体"));
+	 outtextxy(150, 30, s4);
+	 FlushMouseMsgBuffer();
+	 // 获取一条鼠标消息
+	 while (true)
+	 {
+		 // 获取一条鼠标消息
+		 m = GetMouseMsg();
+		 switch (m.uMsg)
+		 {
+		 case WM_LBUTTONDOWN:
+			 DelText();
+			 FillLeftEar(x,y,getpixel(m.x,m.y));			
+			Sleep(100);
+			FillRightEar(x, y, getpixel(m.x, m.y));
+			off = 1;
+			break;
+		 case WM_RBUTTONUP:
+			 ;	// 按鼠标右键退出程序
+		 }
+		 if (off == 1)
+		 {
+			 break;//退出获取鼠标事件
+		 }
+	 }
+	 off = 0;
+	 TCHAR s5[] = _T("请选择眼睛的颜色");
+	 settextcolor(RGB(241, 149, 108));
+	 settextstyle(40, 0, _T("楷体"));
+	 outtextxy(150, 30, s5);
+	 FlushMouseMsgBuffer();
+	 // 获取一条鼠标消息
+	 while (true)
+	 {
+		 // 获取一条鼠标消息
+		 m = GetMouseMsg();
+		 switch (m.uMsg)
+		 {
+		 case WM_LBUTTONDOWN:
+			 DelText();
+			 FillEyes(x, y, getpixel(m.x, m.y));
+			 off = 1;
+			 break;
+		 case WM_RBUTTONUP:
+			 ;	// 按鼠标右键退出程序
+		 }
+		 if (off == 1)
+		 {
+			 break;//退出获取鼠标事件
+		 }
+	 }
+	 off = 0;
+	 TCHAR s6[] = _T("请选择脸颊的颜色");
+	 settextcolor(RGB(241, 149, 108));
+	 settextstyle(40, 0, _T("楷体"));
+	 outtextxy(150, 30, s6);
+	 FlushMouseMsgBuffer();
+	 // 获取一条鼠标消息
+	 while (true)
+	 {
+		 // 获取一条鼠标消息
+		 m = GetMouseMsg();
+		 switch (m.uMsg)
+		 {
+		 case WM_LBUTTONDOWN:
+			 DelText();
+			 FillCheeks(x, y, getpixel(m.x, m.y));
+			 off = 1;
+			 break;
+		 case WM_RBUTTONUP:
+			 ;	// 按鼠标右键退出程序
+		 }
+		 if (off == 1)
+		 {
+			 break;//退出获取鼠标事件
+		 }
+	 }
+	 off = 0;
+	 TCHAR s7[] = _T("请选择鼻子的颜色");
+	 settextcolor(RGB(241, 149, 108));
+	 settextstyle(40, 0, _T("楷体"));
+	 outtextxy(150, 30, s7);
+	 FlushMouseMsgBuffer();
+	 // 获取一条鼠标消息
+	 while (true)
+	 {
+		 // 获取一条鼠标消息
+		 m = GetMouseMsg();
+		 switch (m.uMsg)
+		 {
+		 case WM_LBUTTONDOWN:
+			 DelText();
+			 FillNose(x, y, getpixel(m.x, m.y));
+			 off = 1;
+			 break;
+		 case WM_RBUTTONUP:
+			 ;	// 按鼠标右键退出程序
+		 }
+		 if (off == 1)
+		 {
+			 break;//退出获取鼠标事件
+		 }
+	 }
+	 off = 0;
+	 TCHAR s8[] = _T("请选择嘴巴的颜色");
+	 settextcolor(RGB(241, 149, 108));
+	 settextstyle(40, 0, _T("楷体"));
+	 outtextxy(150, 30, s8);
+	 FlushMouseMsgBuffer();
+	 // 获取一条鼠标消息
+	 while (true)
+	 {
+		 // 获取一条鼠标消息
+		 m = GetMouseMsg();
+		 switch (m.uMsg)
+		 {
+		 case WM_LBUTTONDOWN:
+			 DelText();
+			 FillMouth(x, y, getpixel(m.x, m.y));
+			 off = 1;
+			 break;
+		 case WM_RBUTTONUP:
+			 ;	// 按鼠标右键退出程序
+		 }
+		 if (off == 1)
+		 {
+			 break;//退出获取鼠标事件
+		 }
+	 }
+	 off = 0;
+	 TCHAR s9[] = _T("请选择胡萝卜的颜色");
+	 settextcolor(RGB(241, 149, 108));
+	 settextstyle(40, 0, _T("楷体"));
+	 outtextxy(150, 30, s9);
+	 FlushMouseMsgBuffer();
+	 // 获取一条鼠标消息
+	 while (true)
+	 {
+		 // 获取一条鼠标消息
+		 m = GetMouseMsg();
+		 switch (m.uMsg)
+		 {
+		 case WM_LBUTTONDOWN:
+			 DelText();
+			 FillCarrot(x, y, getpixel(m.x, m.y));
+			 off = 1;
+			 break;
+		 case WM_RBUTTONUP:
+			 ;	// 按鼠标右键退出程序
+		 }
+		 if (off == 1)
+		 {
+			 break;//退出获取鼠标事件
+		 }
+	 }
+	 off = 0;
+	 TCHAR s10[] = _T("请选择绿叶的颜色");
+	 settextcolor(RGB(241, 149, 108));
+	 settextstyle(40, 0, _T("楷体"));
+	 outtextxy(150, 30, s10);
+	 FlushMouseMsgBuffer();
+	 // 获取一条鼠标消息
+	 while (true)
+	 {
+		 // 获取一条鼠标消息
+		 m = GetMouseMsg();
+		 switch (m.uMsg)
+		 {
+		 case WM_LBUTTONDOWN:
+			 DelText();
+			 FillLeaf(x, y, getpixel(m.x, m.y));
+			 off = 1;
+			 break;
+		 case WM_RBUTTONUP:
+			 ;	// 按鼠标右键退出程序
+		 }
+		 if (off == 1)
+		 {
+			 break;//退出获取鼠标事件
+		 }
+	 }
+	 off = 0;
+	 TCHAR s11[] = _T("请选择脚丫的颜色");
+	 settextcolor(RGB(241, 149, 108));
+	 settextstyle(40, 0, _T("楷体"));
+	 outtextxy(150, 30, s11);
+	 FlushMouseMsgBuffer();
+	 // 获取一条鼠标消息
+	 while (true)
+	 {
+		 // 获取一条鼠标消息
+		 m = GetMouseMsg();
+		 switch (m.uMsg)
+		 {
+		 case WM_LBUTTONDOWN:
+			 FillFoots(x, y, getpixel(m.x, m.y));
+			 off = 1;
+			 break;
+		 case WM_RBUTTONUP:
+			 ;	// 按鼠标右键退出程序
+		 }
+		 if (off == 1)
+		 {
+			 break;//退出获取鼠标事件
+		 }
+	 }
+	 DelText();
+	 TCHAR s12[] = _T("点击鼠标继续");
+	 settextcolor(RGB(241, 149, 108));
+	 settextstyle(40, 0, _T("楷体"));
+	 outtextxy(150, 30, s12);
+	 off = 0;
+	 TCHAR s13[] = _T("真棒！极乐净土送给你");
+	 settextcolor(RGB(241, 149, 108));
+	 settextstyle(40, 0, _T("楷体"));
+	 FlushMouseMsgBuffer();
+	 // 获取一条鼠标消息
+	 while (true)
+	 {
+		 // 获取一条鼠标消息
+		 m = GetMouseMsg();
+		 switch (m.uMsg)
+		 {
+		 case WM_LBUTTONDOWN:
+			 DelText();		
+			 outtextxy(150, 30, s13);
+			 off = 1;
+			 break;
+		 case WM_RBUTTONUP:
+			 ;	// 按鼠标右键退出程序
+		 }
+		 if (off == 1)
+		 {
+			 break;//退出获取鼠标事件
+		 }
+	 }
+ }
+ void DelText() {
+	 //消除字体
+	 setfillcolor(RGB(255, 255, 255));
+	 setlinecolor(RGB(255, 255, 255));
+	 POINT pts[] = { {0, 0}, {590, 0}, {590, 80}, {0, 80} };
+	 fillpolygon(pts, 4);
  }
 
 
