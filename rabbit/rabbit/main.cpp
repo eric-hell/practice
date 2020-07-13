@@ -2,8 +2,14 @@
 #include<Windows.h>
 #include<math.h>
 #include<string>
+#include <string.h>
 #include<iostream>
 #include <conio.h>
+#include<stdio.h>
+#include <MMSystem.h> // 播放音乐需要的头文件
+#pragma comment(lib, "winmm.lib") //告诉编译器, 加载winmm.lib库文件
+#pragma warning(disable:4996);
+#define COUNT 148
 using namespace std;
 void Cirni(double X1, double Y1, double X2, double Y2, double X3, double Y3, double hudu1, double hudu2);
 void Cirshun(double X1, double Y1, double X2, double Y2, double X3, double Y3, double hudu1, double hudu2);
@@ -26,6 +32,7 @@ void FillFoots(int x, int y, COLORREF rgb);
 void SetColorCard(int x, int y);
 void GameStart(int x,int y);
 void DelText();
+int Play();
 int main(void) {
 	//初始化图形
 	initgraph(1200, 700);
@@ -1876,6 +1883,9 @@ int BoundaryFill(int x, int y, COLORREF rgb)
 			 break;//退出获取鼠标事件
 		 }
 	 }
+	 Sleep(1000);
+	 closegraph();
+	 Play();
  }
  void DelText() {
 	 //消除字体
@@ -1883,6 +1893,34 @@ int BoundaryFill(int x, int y, COLORREF rgb)
 	 setlinecolor(RGB(255, 255, 255));
 	 POINT pts[] = { {0, 0}, {590, 0}, {590, 80}, {0, 80} };
 	 fillpolygon(pts, 4);
+ }
+ int Play() {
+	 char fileName[128];
+
+	 std::cout << "正在加载..." << std::endl;
+
+	 //预加载
+	 IMAGE images[COUNT];
+	 for (int i = 1; i <= COUNT; i++) {
+		 sprintf(fileName, _T("_%04d_图层-%d.jpg"), COUNT - i, i);
+		 loadimage(&images[i - 1], fileName);
+	 }
+
+	 initgraph(800, 450);
+
+	 // 重复播放"极乐净土.mp3"
+	 mciSendString(_T("play 极乐净土.mp3 repeat"), 0, 0, 0);
+
+	 while (1) {
+		 for (int i = 0; i < COUNT; i++) {
+			 putimage(0, 0, &images[i - 1]);
+			 Sleep(75);
+		 }
+	 }
+
+	 system("pause");
+	 closegraph();
+	 return 0;
  }
 
 
