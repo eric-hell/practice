@@ -16,23 +16,25 @@ void Cirshun(double X1, double Y1, double X2, double Y2, double X3, double Y3, d
 void Cirthree(double X1, double Y1, double X2, double Y2, double X3, double Y3, double hudu1, double hudu2);
 double HuDu(double x0, double y0, double x1, double y1);
 double Cross(double X1, double Y1, double X2, double Y2, double X3, double Y3);
-void drawrabbit(double x, double y, double scale);
+void drawrabbit(double x, double y, COLORREF rgb, double scale);
 double angle_to_radian(double degree, double min, double second);
 POINT convert(double x, double y, double X, double Y,double scale);
 POINT  converthouse(double x, double y, double X, double Y,double scale);
-int BoundaryFill(int x, int y, COLORREF rgb);
-void FillLeftEar(int x, int y, COLORREF rgb,double scale);
-void FillRightEar(int x, int y, COLORREF rgb, double scale);
-void FillCarrot(int x, int y, COLORREF rgb, double scale);
-void FillLeaf(int x, int y, COLORREF rgb, double scale);
-void FillCheeks(int x, int y, COLORREF rgb, double scale);
-void FillEyes(int x, int y, COLORREF rgb, double scale);
-void FillNose(int x, int y, COLORREF rgb, double scale);
-void FillMouth(int x, int y, COLORREF rgb, double scale);
-void FillFoots(int x, int y, COLORREF rgb, double scale);
+//void FillLeftEar(int x, int y, COLORREF rgb,double scale);
+//void FillRightEar(int x, int y, COLORREF rgb, double scale);
+//void FillCarrot(int x, int y, COLORREF rgb, double scale);
+//void FillLeaf(int x, int y, COLORREF rgb, double scale);
+//void FillCheeks(int x, int y, COLORREF rgb, double scale);
+//void FillEyes(int x, int y, COLORREF rgb, double scale);
+//void FillNose(int x, int y, COLORREF rgb, double scale);
+//void FillMouth(int x, int y, COLORREF rgb, double scale);
+//void FillFoots(int x, int y, COLORREF rgb, double scale);
 void DrawHouse(int x, int y, COLORREF rgb, double scale);
+void Scan(int x, int y, COLORREF bk, COLORREF fk);
 void SetColorCard(int x, int y);
-void GameStart(int x,int y,double scale);
+void GameStart(int x,int y, COLORREF bk, double scale);
+void SetButton(POINT a, POINT b, TCHAR[]);
+int JustIn(POINT a, POINT b, POINT c);
 void DelText();
 int Play();
 int main(void) {
@@ -48,11 +50,11 @@ int main(void) {
 	//double m = atan((136.0-263.0)/(520.0-385.0));
 	//double n = atan((136.0 - 263.0) / (520.0 - 385.0));
 	//FillCheeks(400, 225, 254, 204, 203);
-	DrawHouse(180, 70, RGB(0, 0, 0), 3.5);
+	/*DrawHouse(180, 70, RGB(0, 0, 0), 3.5);*/
 	Sleep(1000);
-	drawrabbit(300, 300, 1);
+	drawrabbit(300, 300, RGB(0, 0, 0), 1);
 	SetColorCard(600,50);
-	GameStart(300,300,1);
+	GameStart(300,300, RGB(0, 0, 0), 1);
 
 	system("pause");
 	return 0;
@@ -325,15 +327,16 @@ double HuDu(double x0, double y0, double x1, double y1) {
 /// <summary>
 /// 绘制兔子图形
 /// </summary>
-/// <param name="x">鼻子中心的横坐标</param>
-/// <param name="y">鼻子中心的纵坐标</param>
+/// <param name="x">屏幕上指定鼻子中心的横坐标</param>
+/// <param name="y">屏幕上指定鼻子中心的纵坐标</param>
+/// <param name="bk">边线背景色</param>
 /// <param name="scale">缩放大小</param>
-void drawrabbit(double x, double y, double scale) {
+void drawrabbit(double x, double y, COLORREF bk, double scale) {
 	setaspectratio(scale,scale);
 	const int delay = 100;
 	setlinestyle(PS_SOLID, 5);
 	//设置线色
-	setlinecolor(RGB(10, 10, 10));
+	setlinecolor(bk);
 	//先绘制颜色填充的
 	//左边耳朵
 	//setlinestyle(PS_SOLID, 5);
@@ -353,7 +356,7 @@ void drawrabbit(double x, double y, double scale) {
 	////设置线型
 	//setlinestyle(PS_SOLID, 5);
 	////设置线色
-	//setlinecolor(RGB(10, 10, 10));
+	//setlinecolor(bk);
 	//line(convert(445, 436, x, y,scale).x, convert(445, 436, x, y,scale).y, convert(451, 453, x, y,scale).x, convert(451, 453, x, y,scale).y);
 	////X=0.445米  Y=0.436米  X=0.420米  Y=0.440米
 	//line(convert(445, 436, x, y,scale).x, convert(445, 436, x, y,scale).y, convert(420, 440, x, y,scale).x, convert(420, 440, x, y,scale).y);
@@ -843,30 +846,6 @@ double Cross(double X1, double Y1, double X2, double Y2, double X3, double Y3) {
 	//利用向量叉乘判断旋转方向，返回大于0是顺时针，小于0是逆时针。
 	return (X2 - X1) * (Y3 - Y2) - (Y2 - Y1) * (X3 - X2);
 }
-/// <summary>
-/// 种子填充
-/// </summary>
-/// <param name="x">中心的横坐标</param>
-/// <param name="y">中心的纵坐标</param>
-/// <param name="r">R</param>
-/// <param name="g">G</param>
-/// <param name="b">B</param>
-/// <returns></returns>
-int BoundaryFill(int x, int y, COLORREF rgb)
-{
-	int c = 0;
-	c = getpixel(x, y);
-	if (c != rgb)
-	{
-		putpixel(x, y, rgb);
-	}
-	if (c == rgb)
-		return 0;
-	BoundaryFill(x + 1, y, rgb);
-	BoundaryFill(x - 1, y, rgb);
-	BoundaryFill(x, y + 1, rgb);
-	BoundaryFill(x, y - 1, rgb);
-}
  /// <summary>
  /// 填充左耳朵颜色
  /// </summary>
@@ -875,477 +854,477 @@ int BoundaryFill(int x, int y, COLORREF rgb)
  /// <param name="r">R</param>
  /// <param name="g">G</param>
  /// <param name="b">B</param>
- void FillLeftEar(int x,int y, COLORREF rgb,double scale){
-	/* 先绘制颜色填充的*/
-		/*左边耳朵颜色填充*/
-		setlinestyle(PS_SOLID, 5);
-		//设置线色
-		setlinecolor(rgb);
-		//直线 X=0.445米  Y=0.436米    X=0.451米  Y=0.453米 
-		line(convert(445, 436, x, y,scale).x, convert(445, 436, x, y,scale).y, convert(451, 453, x, y,scale).x, convert(451, 453, x, y,scale).y);
-		//X=0.445米  Y=0.436米  X=0.420米  Y=0.440米
-		line(convert(445, 436, x, y,scale).x, convert(445, 436, x, y,scale).y, convert(420, 440, x, y,scale).x, convert(420, 440, x, y,scale).y);
-		//X=0.451米  Y=0.453米   X=0.432米  Y=0.461米
-		line(convert(451, 453, x, y,scale).x, convert(451, 453, x, y,scale).y, convert(432, 461, x, y,scale).x, convert(432, 461, x, y,scale).y);
-		//X = 0.432米  Y = 0.461米 X=0.427米  Y=0.451米 X=0.420米  Y=0.440米 338度16分33.76秒 320度18分27.11秒
-		Cirthree(convert(432, 461, x, y,scale).x, convert(432, 461, x, y,scale).y, convert(427, 451, x, y,scale).x, convert(427, 451, x, y,scale).y, convert(420, 440, x, y,scale).x, convert(420, 440, x, y,scale).y,
-			angle_to_radian(338, 16, 33.76), angle_to_radian(320, 18, 27.11));
-		//填充颜色 X=0.437米  Y=0.447米 
-		BoundaryFill(convert(437, 447, x, y,scale).x, convert(437, 447, x, y,scale).y,rgb);
-		//设置线型
-		setlinestyle(PS_SOLID, 5);
-		//设置线色
-		setlinecolor(RGB(10, 10, 10));
-		line(convert(445, 436, x, y,scale).x, convert(445, 436, x, y,scale).y, convert(451, 453, x, y,scale).x, convert(451, 453, x, y,scale).y);
-		//X=0.445米  Y=0.436米  X=0.420米  Y=0.440米
-		line(convert(445, 436, x, y,scale).x, convert(445, 436, x, y,scale).y, convert(420, 440, x, y,scale).x, convert(420, 440, x, y,scale).y);
-		//X=0.451米  Y=0.453米   X=0.432米  Y=0.461米
-		line(convert(451, 453, x, y,scale).x, convert(451, 453, x, y,scale).y, convert(432, 461, x, y,scale).x, convert(432, 461, x, y,scale).y);
-		//X = 0.432米  Y = 0.461米 X=0.427米  Y=0.451米 X=0.420米  Y=0.440米 338度16分33.76秒 320度18分27.11秒
-		Cirthree(convert(432, 461, x, y,scale).x, convert(432, 461, x, y,scale).y, convert(427, 451, x, y,scale).x, convert(427, 451, x, y,scale).y, convert(420, 440, x, y,scale).x, convert(420, 440, x, y,scale).y,
-			angle_to_radian(338, 16, 33.76), angle_to_radian(320, 18, 27.11));
- }
- /// <summary>
- /// 填充右耳朵颜色
- /// </summary>
- /// <param name="x">指定坐标X</param>
- /// <param name="y">指定坐标Y</param>
- /// <param name="r">R</param>
- /// <param name="g">G</param>
- /// <param name="b">B</param>
- void FillRightEar(int x,int y, COLORREF rgb,double scale) {
-	/* 右边耳朵颜色填充*/
-	setlinestyle(PS_SOLID, 5);
-	//设置线色
-	setlinecolor(rgb);
-	//直线  X=0.378米  Y=0.686米  X=0.362米  Y=0.696米 
-	line(convert(378, 686, x, y,scale).x, convert(378, 686, x, y,scale).y, convert(362, 696, x, y,scale).x, convert(362, 696, x, y,scale).y);
-	//
-	//X=0.378米  Y=0.686米 X=0.365米  Y=0.665米 
-	line(convert(378, 686, x, y,scale).x, convert(378, 686, x, y,scale).y, convert(365, 665, x, y,scale).x, convert(365, 665, x, y,scale).y);
-	// X=0.362米  Y=0.696米 X=0.341米  Y=0.676米
-	line(convert(362, 696, x, y,scale).x, convert(362, 696, x, y,scale).y, convert(341, 676, x, y,scale).x, convert(341, 676, x, y,scale).y);
-	/*X=0.365米  Y=0.665米  X=0.354米  Y=0.671米   X=0.341米  Y=0.676米 59度45分41.34秒 70度36分34.68秒*/
-	Cirthree(convert(365, 665, x, y,scale).x, convert(365, 665, x, y,scale).y, convert(354, 671, x, y,scale).x, convert(354, 671, x, y,scale).y, convert(341, 676, x, y,scale).x, convert(341, 676, x, y,scale).y,
-		angle_to_radian(59, 45, 41.34), angle_to_radian(70, 36, 34.68));
-	//填充颜色  X=0.363米  Y=0.679米  
-	BoundaryFill(convert(363, 679, x, y,scale).x, convert(363, 679, x, y,scale).y,rgb);
-	//设置线型
-	setlinestyle(PS_SOLID, 5);
-	//设置线色
-	setlinecolor(RGB(10, 10, 10));
-	//直线  X=0.378米  Y=0.686米  X=0.362米  Y=0.696米 
-	line(convert(378, 686, x, y,scale).x, convert(378, 686, x, y,scale).y, convert(362, 696, x, y,scale).x, convert(362, 696, x, y,scale).y);
-	//
-	/*X=0.378米  Y=0.686米 X=0.365米  Y=0.665米 */
-	line(convert(378, 686, x, y,scale).x, convert(378, 686, x, y,scale).y, convert(365, 665, x, y,scale).x, convert(365, 665, x, y,scale).y);
-	// X=0.362米  Y=0.696米 X=0.341米  Y=0.676米
-	line(convert(362, 696, x, y,scale).x, convert(362, 696, x, y,scale).y, convert(341, 676, x, y,scale).x, convert(341, 676, x, y,scale).y);
-	//X=0.365米  Y=0.665米  X=0.354米  Y=0.671米   X=0.341米  Y=0.676米 59度45分41.34秒 70度36分34.68秒
-	Cirthree(convert(365, 665, x, y,scale).x, convert(365, 665, x, y,scale).y, convert(354, 671, x, y,scale).x, convert(354, 671, x, y,scale).y, convert(341, 676, x, y,scale).x, convert(341, 676, x, y,scale).y,
-		angle_to_radian(59, 45, 41.34), angle_to_radian(70, 36, 34.68));
- }
- /// <summary>
- /// 填充胡萝卜颜色
- /// </summary>
- /// <param name="x">指定坐标X</param>
- /// <param name="y">指定坐标Y</param>
- /// <param name="r">R</param>
- /// <param name="g">G</param>
- /// <param name="b">B</param>
- void FillCarrot(int x, int y, COLORREF rgb,double scale) {
-	/* 胡萝卜填充*/
-		setlinestyle(PS_SOLID, 5);
-		//设置线色
-		setlinecolor(rgb);
-		Cirthree(convert(182, 445, x, y,scale).x, convert(182, 445, x, y,scale).y, convert(196, 443, x, y,scale).x, convert(196, 443, x, y,scale).y, convert(208, 455, x, y,scale).x, convert(208, 455, x, y,scale).y,
-			angle_to_radian(235, 10, 22.8), angle_to_radian(347, 4, 4.18));//前加减小 后减减小
-			//X=0.208米  Y=0.455米  X=0.204米  Y=0.485米    X=0.202米  Y=0.488米 352度52分48.42秒 27度1分47.81秒
-		Cirthree(convert(208, 455, x, y,scale).x, convert(208, 455, x, y,scale).y, convert(204, 485, x, y,scale).x, convert(204, 485, x, y,scale).y, convert(202, 488, x, y,scale).x, convert(202, 488, x, y,scale).y,
-			angle_to_radian(352, 52, 48.42), angle_to_radian(27, 1, 47.81));//前加减小 后减减小
-			// X=0.202米  Y=0.488米   X=0.197米  Y=0.545米    X=0.199米  Y=0.551米 204度52分26.34秒 160度30分24.25秒
-		Cirthree(convert(202, 488, x, y,scale).x, convert(202, 488, x, y,scale).y, convert(197, 545, x, y,scale).x, convert(197, 545, x, y,scale).y, convert(199, 551, x, y,scale).x, convert(199, 551, x, y,scale).y,
-			angle_to_radian(204, 52, 26.34)-0.1, angle_to_radian(160, 30, 24.25));//前加减小 后减减小
-		//4  X=0.199米  Y=0.551米  X=0.189米  Y=0.558米  X=0.177米  Y=0.559米  39度26分10.94秒 100度12分16.85秒
-		Cirthree(convert(199, 551, x, y,scale).x, convert(199, 551, x, y,scale).y, convert(189, 558, x, y,scale).x, convert(189, 558, x, y,scale).y, convert(177, 559, x, y,scale).x, convert(177, 559, x, y,scale).y,
-			angle_to_radian(39, 26, 10.94) , angle_to_radian(100, 12, 16.85));//前加减小 后减减小
-		//X=0.163米  Y=0.592米 X=0.173米  Y=0.576米   X=0.178米  Y=0.557米 34度40分23.80秒 2度53分37.42秒
-		Cirthree(convert(163, 592, x, y,scale).x, convert(163, 592, x, y,scale).y, convert(173, 576, x, y,scale).x, convert(173, 576, x, y,scale).y, convert(178, 557, x, y,scale).x, convert(178, 557, x, y,scale).y,
-			angle_to_radian(34, 40, 23.8) - 0.1, angle_to_radian(2, 53, 37.42));//前加减小 后减减小
-		//X=0.178米  Y=0.557米  X=0.169米  Y=0.541米 X=0.146米  Y=0.541米 357度17分30.34秒 235度17分53.72秒
-		Cirthree(convert(178, 557, x, y,scale).x, convert(178, 557, x, y,scale).y, convert(169, 541, x, y,scale).x, convert(169, 541, x, y,scale).y, convert(146, 541, x, y,scale).x, convert(146, 541, x, y,scale).y,
-			angle_to_radian(357, 17, 30.34), angle_to_radian(235, 17, 53.72));//前加减小 后减减小
-		//X=0.146米  Y=0.541米  X=0.128米  Y=0.556米   X=0.116米  Y=0.576米 236度32分55.32秒 204度36分28.89秒
-		Cirthree(convert(146, 541, x, y,scale).x, convert(146, 541, x, y,scale).y, convert(128, 556, x, y,scale).x, convert(128, 556, x, y,scale).y, convert(116, 576, x, y,scale).x, convert(116, 576, x, y,scale).y,
-			angle_to_radian(236, 32, 55.32), angle_to_radian(204, 36, 28.89));//前加减小 后减减小
-			//7   X=0.139米  Y=0.546米  X=0.152米  Y=0.493米  X=0.170米  Y=0.462米 184度30分26.61秒 216度49分29.37秒
-		Cirthree(convert(139, 546, x, y,scale).x, convert(139, 546, x, y,scale).y, convert(152, 493, x, y,scale).x, convert(152, 493, x, y,scale).y, convert(170, 462, x, y,scale).x, convert(170, 462, x, y,scale).y,
-			angle_to_radian(184, 30, 26.61), angle_to_radian(216, 49, 29.37));//前加减小 后减减小
-		//X=0.177米  Y=0.415米  X=0.182米  Y=0.435米    X=0.180米  Y=0.457米 338度9分26.11秒 13度17分49.62秒
-		Cirthree(convert(177, 415, x, y,scale).x, convert(177, 415, x, y,scale).y, convert(182, 435, x, y,scale).x, convert(182, 435, x, y,scale).y, convert(180, 457, x, y,scale).x, convert(180, 457, x, y,scale).y,
-			angle_to_radian(338, 9, 26.11), angle_to_radian(13, 17, 49.62));//前加减小 后减减小
-		//X=0.180米  Y=0.456米  X=0.175米  Y=0.461米  X=0.162米  Y=0.458米 22度59分33.74秒 143度0分4.64秒
-		Cirthree(convert(180, 456, x, y,scale).x, convert(180, 456, x, y,scale).y, convert(175, 461, x, y,scale).x, convert(175, 461, x, y,scale).y, convert(162, 458, x, y,scale).x, convert(162, 458, x, y,scale).y,
-			angle_to_radian(22, 59, 33.74), angle_to_radian(143, 0, 4.64));//前加减小 后减减小
-		//填充颜色   X=0.178米  Y=0.497米
-			BoundaryFill(convert(178, 497, x, y,scale).x, convert(178, 497, x, y,scale).y,rgb);
-			//设置线型
-			setlinestyle(PS_SOLID, 5);
-			//设置线色
-			setlinecolor(RGB(10, 10, 10));
-	Cirthree(convert(182, 445, x, y,scale).x, convert(182, 445, x, y,scale).y, convert(196, 443, x, y,scale).x, convert(196, 443, x, y,scale).y, convert(208, 455, x, y,scale).x, convert(208, 455, x, y,scale).y,
-			angle_to_radian(235, 10, 22.8), angle_to_radian(347, 4, 4.18));//前加减小 后减减小
-			//X=0.208米  Y=0.455米  X=0.204米  Y=0.485米    X=0.202米  Y=0.488米 352度52分48.42秒 27度1分47.81秒
-		Cirthree(convert(208, 455, x, y,scale).x, convert(208, 455, x, y,scale).y, convert(204, 485, x, y,scale).x, convert(204, 485, x, y,scale).y, convert(202, 488, x, y,scale).x, convert(202, 488, x, y,scale).y,
-			angle_to_radian(352, 52, 48.42), angle_to_radian(27, 1, 47.81));//前加减小 后减减小
-			// X=0.202米  Y=0.488米   X=0.197米  Y=0.545米    X=0.199米  Y=0.551米 204度52分26.34秒 160度30分24.25秒
-		Cirthree(convert(202, 488, x, y,scale).x, convert(202, 488, x, y,scale).y, convert(197, 545, x, y,scale).x, convert(197, 545, x, y,scale).y, convert(199, 551, x, y,scale).x, convert(199, 551, x, y,scale).y,
-			angle_to_radian(204, 52, 26.34)-0.1, angle_to_radian(160, 30, 24.25));//前加减小 后减减小
-		//4  X=0.199米  Y=0.551米  X=0.189米  Y=0.558米  X=0.177米  Y=0.559米  39度26分10.94秒 100度12分16.85秒
-		Cirthree(convert(199, 551, x, y,scale).x, convert(199, 551, x, y,scale).y, convert(189, 558, x, y,scale).x, convert(189, 558, x, y,scale).y, convert(177, 559, x, y,scale).x, convert(177, 559, x, y,scale).y,
-			angle_to_radian(39, 26, 10.94) , angle_to_radian(100, 12, 16.85));//前加减小 后减减小
-		//X=0.163米  Y=0.592米 X=0.173米  Y=0.576米   X=0.178米  Y=0.557米 34度40分23.80秒 2度53分37.42秒
-		Cirthree(convert(163, 592, x, y,scale).x, convert(163, 592, x, y,scale).y, convert(173, 576, x, y,scale).x, convert(173, 576, x, y,scale).y, convert(178, 557, x, y,scale).x, convert(178, 557, x, y,scale).y,
-			angle_to_radian(34, 40, 23.8) - 0.1, angle_to_radian(2, 53, 37.42));//前加减小 后减减小
-		//X=0.178米  Y=0.557米  X=0.169米  Y=0.541米 X=0.146米  Y=0.541米 357度17分30.34秒 235度17分53.72秒
-		Cirthree(convert(178, 557, x, y,scale).x, convert(178, 557, x, y,scale).y, convert(169, 541, x, y,scale).x, convert(169, 541, x, y,scale).y, convert(146, 541, x, y,scale).x, convert(146, 541, x, y,scale).y,
-			angle_to_radian(357, 17, 30.34), angle_to_radian(235, 17, 53.72));//前加减小 后减减小
-		//X=0.146米  Y=0.541米  X=0.128米  Y=0.556米   X=0.116米  Y=0.576米 236度32分55.32秒 204度36分28.89秒
-		Cirthree(convert(146, 541, x, y,scale).x, convert(146, 541, x, y,scale).y, convert(128, 556, x, y,scale).x, convert(128, 556, x, y,scale).y, convert(116, 576, x, y,scale).x, convert(116, 576, x, y,scale).y,
-			angle_to_radian(236, 32, 55.32), angle_to_radian(204, 36, 28.89));//前加减小 后减减小
-			//7   X=0.139米  Y=0.546米  X=0.152米  Y=0.493米  X=0.170米  Y=0.462米 184度30分26.61秒 216度49分29.37秒
-		Cirthree(convert(139, 546, x, y,scale).x, convert(139, 546, x, y,scale).y, convert(152, 493, x, y,scale).x, convert(152, 493, x, y,scale).y, convert(170, 462, x, y,scale).x, convert(170, 462, x, y,scale).y,
-			angle_to_radian(184, 30, 26.61), angle_to_radian(216, 49, 29.37));//前加减小 后减减小
-		//X=0.177米  Y=0.415米  X=0.182米  Y=0.435米    X=0.180米  Y=0.457米 338度9分26.11秒 13度17分49.62秒
-		Cirthree(convert(177, 415, x, y,scale).x, convert(177, 415, x, y,scale).y, convert(182, 435, x, y,scale).x, convert(182, 435, x, y,scale).y, convert(180, 457, x, y,scale).x, convert(180, 457, x, y,scale).y,
-			angle_to_radian(338, 9, 26.11), angle_to_radian(13, 17, 49.62));//前加减小 后减减小
-		//X=0.180米  Y=0.456米  X=0.175米  Y=0.461米  X=0.162米  Y=0.458米 22度59分33.74秒 143度0分4.64秒
-		Cirthree(convert(180, 456, x, y,scale).x, convert(180, 456, x, y,scale).y, convert(175, 461, x, y,scale).x, convert(175, 461, x, y,scale).y, convert(162, 458, x, y,scale).x, convert(162, 458, x, y,scale).y,
-			angle_to_radian(22, 59, 33.74), angle_to_radian(143, 0, 4.64));//前加减小 后减减小
- }
- /// <summary>
- /// 填充绿叶颜色
- /// </summary>
- /// <param name="x">指定坐标X</param>
- /// <param name="y">指定坐标Y</param>
- /// <param name="r">R</param>
- /// <param name="g">G</param>
- /// <param name="b">B</param>
- void FillLeaf(int x, int y, COLORREF rgb,double scale) {
-	 //绿叶填充
-	 setlinestyle(PS_SOLID, 5);
-	 	//设置线色
-	 	setlinecolor(rgb);
-	 //绿叶
-	 	//11  X=0.195米  Y=0.555米 X=0.204米  Y=0.565米 X=0.206米  Y=0.578米 304度0分44.27秒 2度14分2.70秒
-	 Cirthree(convert(195, 555, x, y,scale).x, convert(195, 555, x, y,scale).y, convert(204, 565, x, y,scale).x, convert(204, 565, x, y,scale).y, convert(206, 578, x, y,scale).x, convert(206, 578, x, y,scale).y,
-	 	angle_to_radian(304, 0, 44.27) + 0.2, angle_to_radian(2, 14, 2.7));//前加减小 后减减小
-	 //12  X=0.206米  Y=0.578米  X=0.200米  Y=0.586米  X=0.188米  Y=0.580米 9度59分48.96秒 158度8分5.94秒
-	 Cirthree(convert(206, 578, x, y,scale).x, convert(206, 578, x, y,scale).y, convert(200, 586, x, y,scale).x, convert(200, 586, x, y,scale).y, convert(188, 580, x, y,scale).x, convert(188, 580, x, y,scale).y,
-	 	angle_to_radian(9, 59, 48.96), angle_to_radian(158, 8, 5.94));//前加减小 后减减小
-	 //13  X=0.188米  Y=0.580米  X=0.181米  Y=0.593米 X=0.168米  Y=0.586米 343度34分17.94秒 163度17分6.93秒
-	 Cirthree(convert(188, 580, x, y,scale).x, convert(188, 580, x, y,scale).y, convert(181, 593, x, y,scale).x, convert(181, 593, x, y,scale).y, convert(168, 586, x, y,scale).x, convert(168, 586, x, y,scale).y,
-	 	angle_to_radian(343, 34, 17.94), angle_to_radian(163, 17, 6.93));//前加减小 后减减小
-	 //X=0.163米  Y=0.592米 X=0.173米  Y=0.576米   X=0.178米  Y=0.557米 34度40分23.80秒 2度53分37.42秒
-	 Cirthree(convert(163, 592, x, y,scale).x, convert(163, 592, x, y,scale).y, convert(173, 576, x, y,scale).x, convert(173, 576, x, y,scale).y, convert(178, 557, x, y,scale).x, convert(178, 557, x, y,scale).y,
-	 	angle_to_radian(34, 40, 23.8) - 0.1, angle_to_radian(2, 53, 37.42));//前加减小 后减减小
-	 //4  X=0.199米  Y=0.551米  X=0.189米  Y=0.558米  X=0.177米  Y=0.559米  39度26分10.94秒 100度12分16.85秒
-		 Cirthree(convert(199, 551, x, y,scale).x, convert(199, 551, x, y,scale).y, convert(189, 558, x, y,scale).x, convert(189, 558, x, y,scale).y, convert(177, 559, x, y,scale).x, convert(177, 559, x, y,scale).y,
-		 	angle_to_radian(39, 26, 10.94) , angle_to_radian(100, 12, 16.85));//前加减小 后减减小
-	 //填充颜色    X=0.188米  Y=0.571米 
-			 BoundaryFill(convert(188, 571, x, y,scale).x, convert(188, 571, x, y,scale).y,rgb);
-			 //设置线型
-			 setlinestyle(PS_SOLID, 5);
-			 //设置线色
-			 setlinecolor(RGB(10, 10, 10));
- //绿叶
-	 	//11  X=0.195米  Y=0.555米 X=0.204米  Y=0.565米 X=0.206米  Y=0.578米 304度0分44.27秒 2度14分2.70秒
-	 Cirthree(convert(195, 555, x, y,scale).x, convert(195, 555, x, y,scale).y, convert(204, 565, x, y,scale).x, convert(204, 565, x, y,scale).y, convert(206, 578, x, y,scale).x, convert(206, 578, x, y,scale).y,
-	 	angle_to_radian(304, 0, 44.27) + 0.2, angle_to_radian(2, 14, 2.7));//前加减小 后减减小
-	 //12  X=0.206米  Y=0.578米  X=0.200米  Y=0.586米  X=0.188米  Y=0.580米 9度59分48.96秒 158度8分5.94秒
-	 Cirthree(convert(206, 578, x, y,scale).x, convert(206, 578, x, y,scale).y, convert(200, 586, x, y,scale).x, convert(200, 586, x, y,scale).y, convert(188, 580, x, y,scale).x, convert(188, 580, x, y,scale).y,
-	 	angle_to_radian(9, 59, 48.96), angle_to_radian(158, 8, 5.94));//前加减小 后减减小
-	 //13  X=0.188米  Y=0.580米  X=0.181米  Y=0.593米 X=0.168米  Y=0.586米 343度34分17.94秒 163度17分6.93秒
-	 Cirthree(convert(188, 580, x, y,scale).x, convert(188, 580, x, y,scale).y, convert(181, 593, x, y,scale).x, convert(181, 593, x, y,scale).y, convert(168, 586, x, y,scale).x, convert(168, 586, x, y,scale).y,
-	 	angle_to_radian(343, 34, 17.94), angle_to_radian(163, 17, 6.93));//前加减小 后减减小
-	 //X=0.163米  Y=0.592米 X=0.173米  Y=0.576米   X=0.178米  Y=0.557米 34度40分23.80秒 2度53分37.42秒
-	 Cirthree(convert(163, 592, x, y,scale).x, convert(163, 592, x, y,scale).y, convert(173, 576, x, y,scale).x, convert(173, 576, x, y,scale).y, convert(178, 557, x, y,scale).x, convert(178, 557, x, y,scale).y,
-	 	angle_to_radian(34, 40, 23.8) - 0.1, angle_to_radian(2, 53, 37.42));//前加减小 后减减小
-	 //4  X=0.199米  Y=0.551米  X=0.189米  Y=0.558米  X=0.177米  Y=0.559米  39度26分10.94秒 100度12分16.85秒
-		 Cirthree(convert(199, 551, x, y,scale).x, convert(199, 551, x, y,scale).y, convert(189, 558, x, y,scale).x, convert(189, 558, x, y,scale).y, convert(177, 559, x, y,scale).x, convert(177, 559, x, y,scale).y,
-		 	angle_to_radian(39, 26, 10.94) , angle_to_radian(100, 12, 16.85));//前加减小 后减减小
- }
- /// <summary>
-/// 填充眼睛颜色
-/// </summary>
-/// <param name="x">指定坐标X</param>
-/// <param name="y">指定坐标Y</param>
-/// <param name="r">R</param>
-/// <param name="g">G</param>
-/// <param name="b">B</param>
- void FillEyes(int x, int y, COLORREF rgb,double scale) {
-	 setlinestyle(PS_SOLID, 3);
-	 //设置线色
-	 setlinecolor(rgb);
-	 //左眼
-	//14   X=0.320米  Y=0.476米 X=0.333米  Y=0.485米  X=0.336米  Y=0.493米 285度34分1.95秒 348度7分58.59秒
-	 Cirthree(convert(320, 476, x, y,scale).x, convert(320, 476, x, y,scale).y, convert(333, 485, x, y,scale).x, convert(333, 485, x, y,scale).y, convert(336, 493, x, y,scale).x, convert(336, 493, x, y,scale).y,
-		 angle_to_radian(285, 34, 1.95), angle_to_radian(348, 7, 58.59));//前加减小 后减减小
-	 //15   X=0.336米  Y=0.493米 X=0.332米  Y=0.503米 X=0.326米  Y=0.505米 355度19分23.78秒 90度28分44.97秒
-	 Cirthree(convert(336, 493, x, y,scale).x, convert(336, 493, x, y,scale).y, convert(332, 503, x, y,scale).x, convert(332, 503, x, y,scale).y, convert(326, 505, x, y,scale).x, convert(326, 505, x, y,scale).y,
-		 angle_to_radian(355, 19, 23.78), angle_to_radian(90, 28, 44.97));//前加减小 后减减小
-	 //16   X=0.326米  Y=0.505米  X=0.308米  Y=0.498米  X=0.301米  Y=0.480米  85度38分9.36秒 184度18分40.34秒
-	 Cirthree(convert(326, 505, x, y,scale).x, convert(326, 505, x, y,scale).y, convert(308, 498, x, y,scale).x, convert(308, 498, x, y,scale).y, convert(301, 480, x, y,scale).x, convert(301, 480, x, y,scale).y,
-		 angle_to_radian(85, 38, 9.36), angle_to_radian(184, 18, 40.34));//前加减小 后减减小
-	 //17   X=0.301米  Y=0.480米   X=0.314米  Y=0.474米  X=0.320米  Y=0.476米 222度52分32.60秒 294度24分49.26秒
-	 Cirthree(convert(301, 480, x, y,scale).x, convert(301, 480, x, y,scale).y, convert(314, 474, x, y,scale).x, convert(314, 474, x, y,scale).y, convert(320, 476, x, y,scale).x, convert(320, 476, x, y,scale).y,
-		 angle_to_radian(222, 52, 32.6), angle_to_radian(294, 24, 49.26));//前加减小 后减减小
-	 //19    X=0.320米  Y=0.491米 X=0.327米  Y=0.488米 X=0.330米  Y=0.492米 197度24分32.69秒 352度36分56.48秒
-	 Cirthree(convert(320, 491, x, y,scale).x, convert(320, 491, x, y,scale).y, convert(327, 488, x, y,scale).x, convert(327, 488, x, y,scale).y, convert(330, 492, x, y,scale).x, convert(330, 492, x, y,scale).y,
-		 angle_to_radian(197, 24, 32.69), angle_to_radian(352, 36, 56.48) + 1.7);//前加减小 后减减小
-	 // X=0.330米  Y=0.492米 X=0.328米  Y=0.496米  X=0.325米  Y=0.497米 1度22分48.28秒 93度16分57.13秒
-	 Cirthree(convert(330, 492, x, y,scale).x, convert(330, 492, x, y,scale).y, convert(328, 496, x, y,scale).x, convert(328, 496, x, y,scale).y, convert(325, 497, x, y,scale).x, convert(325, 497, x, y,scale).y,
-		 angle_to_radian(1, 22, 48.28) + 1.3, angle_to_radian(93, 16, 57.13));//前加减小 后减减小
-	 // X=0.325米  Y=0.497米  X=0.321米  Y=0.494米  X=0.320米  Y=0.491米 98度35分16.88秒 方位角=174度23分34.16秒
-	 Cirthree(convert(325, 497, x, y,scale).x, convert(325, 497, x, y,scale).y, convert(321, 494, x, y,scale).x, convert(321, 494, x, y,scale).y, convert(320, 491, x, y,scale).x, convert(320, 491, x, y,scale).y,
-		 angle_to_radian(98, 35, 16.88), angle_to_radian(174, 23, 34.16));//前加减小 后减减小
-	 //18
-	 //X=0.320米  Y=0.476米 X=0.304米  Y=0.441米   X=0.301米  Y=0.480米  49度25分12.66秒 107度52分9.20秒
-	 Cirthree(convert(320, 476, x, y,scale).x, convert(320, 476, x, y,scale).y, convert(304, 441, x, y,scale).x, convert(304, 441, x, y,scale).y, convert(301, 480, x, y,scale).x, convert(301, 480, x, y,scale).y,
-		 angle_to_radian(49, 25, 12.66) + 0.3, angle_to_radian(107, 52, 9.2) + 0.5);//前加减小 后减减小
-	  //填充颜色    X=0.311米  Y=0.488米
-	 BoundaryFill(convert(311, 488, x, y,scale).x, convert(311, 488, x, y,scale).y,rgb);
-	 Sleep(100);
-
-	 //右眼
-	 //23  X=0.297米  Y=0.571米  X=0.305米  Y=0.578米 X=0.307米  Y=0.589米   290度23分17.75秒 8度41分14.46秒  
-	 Cirthree(convert(297, 571, x, y,scale).x, convert(297, 571, x, y,scale).y, convert(305, 578, x, y,scale).x, convert(305, 578, x, y,scale).y, convert(307, 589, x, y,scale).x, convert(307, 589, x, y,scale).y,
-		 angle_to_radian(290, 23, 17.75), angle_to_radian(8, 41, 14.46));//前加减小 后减减小
-	 //20 X=0.307米  Y=0.589米  X=0.295米  Y=0.597米  X=0.281米  Y=0.594米 33度54分37.10秒 124度46分51.43秒   
-	 Cirthree(convert(307, 589, x, y,scale).x, convert(307, 589, x, y,scale).y, convert(295, 597, x, y,scale).x, convert(295, 597, x, y,scale).y, convert(281, 594, x, y,scale).x, convert(281, 594, x, y,scale).y,
-		 angle_to_radian(33, 54, 37.1), angle_to_radian(124, 46, 51.43));//前加减小 后减减小
-	 //21  X=0.281米  Y=0.594米  X=0.273米  Y=0.588米  X=0.270米  Y=0.576米 110度6分20.99秒 182度51分36.95秒  
-	 Cirthree(convert(281, 594, x, y,scale).x, convert(281, 594, x, y,scale).y, convert(273, 588, x, y,scale).x, convert(273, 588, x, y,scale).y, convert(270, 576, x, y,scale).x, convert(270, 576, x, y,scale).y,
-		 angle_to_radian(110, 6, 20.99), angle_to_radian(182, 51, 36.95));//前加减小 后减减小
-	 //22  X=0.270米  Y=0.576米  X=0.285米  Y=0.568米   X=0.297米  Y=0.571米 214度33分24.28秒 302度49分44.41秒  
-	 Cirthree(convert(270, 576, x, y,scale).x, convert(270, 576, x, y,scale).y, convert(285, 568, x, y,scale).x, convert(285, 568, x, y,scale).y, convert(297, 571, x, y,scale).x, convert(297, 571, x, y,scale).y,
-		 angle_to_radian(214, 33, 24.28), angle_to_radian(302, 49, 44.41));//前加减小 后减减小
-	 //24  X=0.300米  Y=0.583米  X=0.296米  Y=0.578米   X=0.291米  Y=0.583米 359度59分60.00秒 182度7分45.49秒   
-	 Cirthree(convert(300, 583, x, y,scale).x, convert(300, 583, x, y,scale).y, convert(296, 578, x, y,scale).x, convert(296, 578, x, y,scale).y, convert(291, 583, x, y,scale).x, convert(291, 583, x, y,scale).y,
-		 angle_to_radian(359, 59, 60), angle_to_radian(182, 7, 45.49) - 0.5);//前加减小 后减减小
-	 //X=0.300米  Y=0.583米  X=0.297米  Y=0.587米   X=0.291米  Y=0.583米 6度45分29.16秒 175度22分16.34秒
-	 Cirthree(convert(300, 583, x, y,scale).x, convert(300, 583, x, y,scale).y, convert(297, 587, x, y,scale).x, convert(297, 587, x, y,scale).y, convert(291, 583, x, y,scale).x, convert(291, 583, x, y,scale).y,
-		 angle_to_radian(359, 59, 60), angle_to_radian(182, 7, 45.49) - 0.2);//前加减小 后减减小
-	 // 25  X=0.281米  Y=0.594米 X=0.242米  Y=0.587米  X=0.270米  Y=0.576米  357度25分51.22秒 296度58分46.19秒
-	 Cirthree(convert(281, 594, x, y,scale).x, convert(281, 594, x, y,scale).y, convert(242, 587, x, y,scale).x, convert(242, 587, x, y,scale).y, convert(270, 576, x, y,scale).x, convert(270, 576, x, y,scale).y,
-		 angle_to_radian(357, 25, 51.22) - 0.2, angle_to_radian(296, 58, 46.19));//前加减小 后减减小
-	   //填充颜色    X=0.282米  Y=0.579米 
-	 BoundaryFill(convert(282, 579, x, y,scale).x, convert(282, 579, x, y,scale).y, rgb);
- }
- /// <summary>
-/// 填充腮帮颜色
-/// </summary>
-/// <param name="x">指定坐标X</param>
-/// <param name="y">指定坐标Y</param>
-/// <param name="r">R</param>
-/// <param name="g">G</param>
-/// <param name="b">B</param>
- void FillCheeks(int x, int y, COLORREF rgb,double scale) {
-	 //逆时针 弧度1增加线开头变短 弧度2减小 末尾线变短
-	 //顺时针 弧度1减小线开头变短 弧度2增加 末尾线变短
-	 setlinestyle(PS_SOLID, 3);
-	 //设置线色
-	 setlinecolor(rgb);
-	 //左腮
-	 //17   X=0.301米  Y=0.480米   X=0.314米  Y=0.474米  X=0.320米  Y=0.476米 222度52分32.60秒 294度24分49.26秒
-	 Cirthree(convert(301, 480, x, y,scale).x, convert(301, 480, x, y,scale).y, convert(314, 474, x, y,scale).x, convert(314, 474, x, y,scale).y, convert(320, 476, x, y,scale).x, convert(320, 476, x, y,scale).y,
-		 angle_to_radian(222, 52, 32.6)+0.8, angle_to_radian(294, 24, 49.26));//前加减小 后减减小
-	//18
-	//X=0.320米  Y=0.476米 X=0.304米  Y=0.441米   X=0.301米  Y=0.480米  49度25分12.66秒 107度52分9.20秒
-	 Cirthree(convert(320, 476, x, y,scale).x, convert(320, 476, x, y,scale).y, convert(304, 441, x, y,scale).x, convert(304, 441, x, y,scale).y, convert(301, 480, x, y,scale).x, convert(301, 480, x, y,scale).y,
-		 angle_to_radian(49, 25, 12.66) + 0.35, angle_to_radian(107, 52, 9.2) + 0.3);//前加减小 后减减小
-	   //填充颜色    X=0.303米  Y=0.455米
-	 BoundaryFill(convert(303, 455, x, y,scale).x, convert(303, 455, x, y,scale).y,rgb);
-	 Sleep(100);
-
-	 //右腮
-	//21  X=0.281米  Y=0.594米  X=0.273米  Y=0.588米  X=0.270米  Y=0.576米 110度6分20.99秒 182度51分36.95秒  
-	 Cirthree(convert(281, 594, x, y,scale).x, convert(281, 594, x, y,scale).y, convert(273, 588, x, y,scale).x, convert(273, 588, x, y,scale).y, convert(270, 576, x, y,scale).x, convert(270, 576, x, y,scale).y,
-		 angle_to_radian(110, 6, 20.99), angle_to_radian(182, 51, 36.95));//前加减小 后减减小
-	// 25  X=0.281米  Y=0.594米 X=0.242米  Y=0.587米  X=0.270米  Y=0.576米  357度25分51.22秒 296度58分46.19秒
-	 Cirthree(convert(281, 594, x, y,scale).x, convert(281, 594, x, y,scale).y, convert(242, 587, x, y,scale).x, convert(242, 587, x, y,scale).y, convert(270, 576, x, y,scale).x, convert(270, 576, x, y,scale).y,
-		 angle_to_radian(357, 25, 51.22) - 0.2, angle_to_radian(296, 58, 46.19));//前加减小 后减减小
-		//填充颜色    : X=0.257米  Y=0.586米  
-	 BoundaryFill(convert(257, 586, x, y,scale).x, convert(257, 586, x, y,scale).y, rgb);
- }
- /// <summary>
-/// 填充鼻子颜色
-/// </summary>
-/// <param name="x">指定坐标X</param>
-/// <param name="y">指定坐标Y</param>
-/// <param name="r">R</param>
-/// <param name="g">G</param>
-/// <param name="b">B</param>
- void FillNose(int x, int y, COLORREF rgb,double scale) {
-	 setlinestyle(PS_SOLID, 3);
-	 //设置线色
-	 setlinecolor(rgb);
-	 //26 
-	//X=0.298米  Y=0.525米  X=0.308米  Y=0.537米  X=0.293米  Y=0.541米  263度22分18.66秒 130度13分16.69秒
-	 Cirthree(convert(298, 525, x, y,scale).x, convert(298, 525, x, y,scale).y, convert(308, 537, x, y,scale).x, convert(308, 537, x, y,scale).y, convert(293, 541, x, y,scale).x, convert(293, 541, x, y,scale).y,
-		 angle_to_radian(263, 22, 18.66), angle_to_radian(130, 13, 16.69));//前加减小 后减减小
-	 //27 
-	 //X=0.299米  Y=0.525米  X=0.295米  Y=0.531米  X=0.296米  Y=0.543米 229度4分22.30秒 150度0分22.36秒
-	 Cirthree(convert(299, 525, x, y,scale).x, convert(299, 525, x, y,scale).y, convert(295, 531, x, y,scale).x, convert(295, 531, x, y,scale).y, convert(296, 543, x, y,scale).x, convert(293, 543, x, y,scale).y,
-		 angle_to_radian(229, 4, 22.3), angle_to_radian(150, 0, 22.36) - 0.5);//前加减小 后减减小
-			//填充颜色    X=0.301米  Y=0.533米
-	 BoundaryFill(convert(301, 533, x, y,scale).x, convert(301, 533, x, y,scale).y, rgb);
- }
- /// <summary>
-/// 填充嘴巴颜色
-/// </summary>
-/// <param name="x">指定坐标X</param>
-/// <param name="y">指定坐标Y</param>
-/// <param name="r">R</param>
-/// <param name="g">G</param>
-/// <param name="b">B</param>
- void FillMouth(int x, int y, COLORREF rgb,double scale) {
-	 setlinestyle(PS_SOLID, 3);
-	 //设置线色
-	 setlinecolor(rgb);
-	 //28 
-	//X=0.294米  Y=0.533米  X=0.284米  Y=0.514米  X=0.290米  Y=0.499米  122度50分28.32秒 223度27分28.35秒
-	 Cirthree(convert(294, 533, x, y,scale).x, convert(294, 533, x, y,scale).y, convert(284, 514, x, y,scale).x, convert(284, 514, x, y,scale).y, convert(290, 499, x, y,scale).x, convert(290, 499, x, y,scale).y,
-		 angle_to_radian(122, 50, 28.32), angle_to_radian(223, 27, 28.35));//前加减小 后减减小
-	 //29 
-	 //X=0.294米  Y=0.533米 X=0.280米  Y=0.540米  X=0.273米  Y=0.561米 257度43分39.66秒 174度6分13.43秒
-	 Cirthree(convert(294, 533, x, y,scale).x, convert(294, 533, x, y,scale).y, convert(280, 540, x, y,scale).x, convert(280, 540, x, y,scale).y, convert(273, 561, x, y,scale).x, convert(273, 561, x, y,scale).y,
-		 angle_to_radian(257, 43, 39.66), angle_to_radian(174, 6, 13.43));//前加减小 后减减小
-	 //30 
-	 // X=0.285米  Y=0.519米  X=0.270米  Y=0.516米   X=0.259米  Y=0.521米 297度57分10.55秒 235度54分32.11秒
-	 Cirthree(convert(285, 519, x, y,scale).x, convert(285, 519, x, y,scale).y, convert(270, 516, x, y,scale).x, convert(270, 516, x, y,scale).y, convert(259, 521, x, y,scale).x, convert(259, 521, x, y,scale).y,
-		 angle_to_radian(297, 57, 10.55), angle_to_radian(235, 54, 32.11) + 0.2);//前加减小 后减减小
-	 //31
-	 // X=0.280米  Y=0.540米  X=0.268米  Y=0.534米  X=0.259米  Y=0.521米 103度26分12.32秒 162度30分12.91秒
-	 Cirthree(convert(280, 540, x, y,scale).x, convert(280, 540, x, y,scale).y, convert(268, 534, x, y,scale).x, convert(268, 534, x, y,scale).y, convert(259, 521, x, y,scale).x, convert(259, 521, x, y,scale).y,
-		 angle_to_radian(103, 26, 12.32), angle_to_radian(162, 30, 12.91));//前加减小 后减减小
-	// X=0.277米  Y=0.526米  
-	 BoundaryFill(convert(277, 526, x, y,scale).x, convert(277, 526, x, y,scale).y, rgb);
-	 //设置线型
-	 setlinestyle(PS_SOLID, 3);
-	 //设置线色
-	 setlinecolor(RGB(10, 10, 10));
-	 //28 
-   //X=0.294米  Y=0.533米  X=0.284米  Y=0.514米  X=0.290米  Y=0.499米  122度50分28.32秒 223度27分28.35秒
-	 Cirthree(convert(294, 533, x, y,scale).x, convert(294, 533, x, y,scale).y, convert(284, 514, x, y,scale).x, convert(284, 514, x, y,scale).y, convert(290, 499, x, y,scale).x, convert(290, 499, x, y,scale).y,
-		 angle_to_radian(122, 50, 28.32), angle_to_radian(223, 27, 28.35));//前加减小 后减减小
-	 //29 
-	 //X=0.294米  Y=0.533米 X=0.280米  Y=0.540米  X=0.273米  Y=0.561米 257度43分39.66秒 174度6分13.43秒
-	 Cirthree(convert(294, 533, x, y,scale).x, convert(294, 533, x, y,scale).y, convert(280, 540, x, y,scale).x, convert(280, 540, x, y,scale).y, convert(273, 561, x, y,scale).x, convert(273, 561, x, y,scale).y,
-		 angle_to_radian(257, 43, 39.66), angle_to_radian(174, 6, 13.43));//前加减小 后减减小
-	 //30 
-	 // X=0.285米  Y=0.519米  X=0.270米  Y=0.516米   X=0.259米  Y=0.521米 297度57分10.55秒 235度54分32.11秒
-	 Cirthree(convert(285, 519, x, y,scale).x, convert(285, 519, x, y,scale).y, convert(270, 516, x, y,scale).x, convert(270, 516, x, y,scale).y, convert(259, 521, x, y,scale).x, convert(259, 521, x, y,scale).y,
-		 angle_to_radian(297, 57, 10.55), angle_to_radian(235, 54, 32.11) + 0.2);//前加减小 后减减小
-	 //31
-	 // X=0.280米  Y=0.540米  X=0.268米  Y=0.534米  X=0.259米  Y=0.521米 103度26分12.32秒 162度30分12.91秒
-	 Cirthree(convert(280, 540, x, y,scale).x, convert(280, 540, x, y,scale).y, convert(268, 534, x, y,scale).x, convert(268, 534, x, y,scale).y, convert(259, 521, x, y,scale).x, convert(259, 521, x, y,scale).y,
-		 angle_to_radian(103, 26, 12.32), angle_to_radian(162, 30, 12.91));//前加减小 后减减小
- }
- /// <summary>
-/// 填充脚丫颜色
-/// </summary>
-/// <param name="x">指定坐标X</param>
-/// <param name="y">指定坐标Y</param>
-/// <param name="r">R</param>
-/// <param name="g">G</param>
-/// <param name="b">B</param>
- void FillFoots(int x, int y, COLORREF rgb,double scale) {
-	 setlinestyle(PS_SOLID, 3);
-	 //设置线色
-	 setlinecolor(rgb);
-
-	 //左脚
-		 // X=0.102米  Y=0.353 X=0.095米  Y=0.352米 X=0.090米  Y=0.363米  297度41分28.87秒 161度26分56.78秒
-	 Cirthree(convert(102, 353, x, y,scale).x, convert(102, 353, x, y,scale).y, convert(95, 352, x, y,scale).x, convert(95, 352, x, y,scale).y, convert(90, 363, x, y,scale).x, convert(90, 363, x, y,scale).y,
-		 angle_to_radian(297, 41, 28.87), angle_to_radian(161, 26, 56.78));//前加减小 后减减小
-	 // X=0.102米  Y=0.353  X=0.098米  Y=0.362米 X=0.090米  Y=0.363米 352度46分12.08秒 106度22分13.57秒
-	 Cirthree(convert(102, 353, x, y,scale).x, convert(102, 353, x, y,scale).y, convert(98, 362, x, y,scale).x, convert(98, 362, x, y,scale).y, convert(90, 363, x, y,scale).x, convert(90, 363, x, y,scale).y,
-		 angle_to_radian(352, 46, 12.08), angle_to_radian(106, 22, 13.57) - 0.3);//前加减小 后减减小
-	 // X=0.096米  Y=0.358米
-	 BoundaryFill(convert(96, 358, x, y,scale).x, convert(96, 358, x, y,scale).y, rgb);
-	 Sleep(100);
-
-	 // X=0.116米  Y=0.362米 X=0.108米  Y=0.360米  X=0.101米  Y=0.367米  317度39分8.35秒 187度5分41.70秒
-	 Cirthree(convert(116, 362, x, y,scale).x, convert(116, 362, x, y,scale).y, convert(108, 360, x, y,scale).x, convert(108, 360, x, y,scale).y, convert(101, 367, x, y,scale).x, convert(101, 367, x, y,scale).y,
-		 angle_to_radian(317, 39, 8.35), angle_to_radian(187, 5, 41.7) - 0.3);//前加减小 后减减小
-	 // X=0.116米  Y=0.362米  X=0.111米  Y=0.369米 X=0.101米  Y=0.367米  X=0.101米  Y=0.367米=8度17分27.46秒  =136度27分22.58秒
-	 Cirthree(convert(116, 362, x, y,scale).x, convert(116, 362, x, y,scale).y, convert(111, 369, x, y,scale).x, convert(111, 369, x, y,scale).y, convert(101, 367, x, y,scale).x, convert(101, 367, x, y,scale).y,
-		 angle_to_radian(8, 17, 27.46), angle_to_radian(136, 27, 22.58));//前加减小 后减减小
-	 //X=0.108米  Y=0.365米
-	 BoundaryFill(convert(108, 365, x, y,scale).x, convert(108, 365, x, y,scale).y, rgb);
-	 Sleep(100);
-
-	 //X=0.117米  Y=0.376米   X=0.109米  Y=0.372米  X=0.101米  Y=0.381米 329度10分9.96秒 181度22分7.37秒
-	 Cirthree(convert(117, 376, x, y,scale).x, convert(117, 376, x, y,scale).y, convert(109, 372, x, y,scale).x, convert(109, 372, x, y,scale).y, convert(101, 381, x, y,scale).x, convert(101, 381, x, y,scale).y,
-		 angle_to_radian(329, 10, 9.96), angle_to_radian(181, 22, 7.37));//前加减小 后减减小
-	 //X=0.117米  Y=0.376米   X=0.111米  Y=0.383米  X=0.101米  Y=0.381米 15度26分31.36秒 135度5分45.98秒
-	 Cirthree(convert(117, 376, x, y,scale).x, convert(117, 376, x, y,scale).y, convert(111, 383, x, y,scale).x, convert(111, 383, x, y,scale).y, convert(101, 381, x, y,scale).x, convert(101, 381, x, y,scale).y,
-		 angle_to_radian(15, 26, 31.36), angle_to_radian(135, 5, 45.98));//前加减小 后减减小
-	 // X=0.108米  Y=0.378米 
-	 BoundaryFill(convert(108, 378, x, y,scale).x, convert(108, 378, x, y,scale).y, rgb);
-	 Sleep(100);
-
-	 //X=0.096米  Y=0.372米 X=0.087米  Y=0.370米  X=0.074米  Y=0.386米 299度3分38.35秒 171度38分8.91秒
-	 Cirthree(convert(96, 372, x, y,scale).x, convert(96, 372, x, y,scale).y, convert(87, 370, x, y,scale).x, convert(87, 370, x, y,scale).y, convert(74, 386, x, y,scale).x, convert(74, 386, x, y,scale).y,
-		 angle_to_radian(299, 3, 38.35), angle_to_radian(171, 38, 8.91));//前加减小 后减减小
-	 //X=0.096米  Y=0.372米 X=0.090米  Y=0.387米   X=0.074米  Y=0.386米  343度40分27.29秒 127度1分19.97秒
-	 Cirthree(convert(96, 372, x, y,scale).x, convert(96, 372, x, y,scale).y, convert(90, 387, x, y,scale).x, convert(90, 387, x, y,scale).y, convert(74, 386, x, y,scale).x, convert(74, 386, x, y,scale).y,
-		 angle_to_radian(343, 40, 27.29), angle_to_radian(127, 1, 19.97));//前加减小 后减减小
-	 //  X=0.084米  Y=0.379米
-	 BoundaryFill(convert(84, 379, x, y,scale).x, convert(84, 379, x, y,scale).y,rgb);
-	 Sleep(100);
-
-	 //右脚
-	 //  X=0.116米  Y=0.642米   X=0.111米  Y=0.636米   X=0.101米  Y=0.638米 341度40分12.79秒 222度43分32.33秒
-	 Cirthree(convert(116, 642, x, y,scale).x, convert(116, 642, x, y,scale).y, convert(111, 636, x, y,scale).x, convert(111, 636, x, y,scale).y, convert(101, 638, x, y,scale).x, convert(101, 638, x, y,scale).y,
-		 angle_to_radian(341, 40, 12.79), angle_to_radian(222, 43, 32.33));//前加减小 后减减小
-	 //X=0.116米  Y=0.642米   X=0.105米  Y=0.645米   X=0.101米  Y=0.638米 29度17分54.10秒 175度5分51.02秒
-	 Cirthree(convert(116, 642, x, y,scale).x, convert(116, 642, x, y,scale).y, convert(105, 645, x, y,scale).x, convert(105, 645, x, y,scale).y, convert(101, 638, x, y,scale).x, convert(101, 638, x, y,scale).y,
-		 angle_to_radian(29, 17, 54.1), angle_to_radian(175, 5, 51.02));//前加减小 后减减小
-	 // X=0.108米  Y=0.639米 
-	 BoundaryFill(convert(108, 639, x, y,scale).x, convert(108, 639, x, y,scale).y, rgb);
-	 Sleep(100);
-
-	 // X=0.115米  Y=0.659米 X=0.109米  Y=0.649米 X=0.101米  Y=0.651米 11度34分2.18秒 226度10分24.04秒
-	 Cirthree(convert(115, 659, x, y,scale).x, convert(115, 659, x, y,scale).y, convert(109, 649, x, y,scale).x, convert(109, 649, x, y,scale).y, convert(101, 651, x, y,scale).x, convert(101, 651, x, y,scale).y,
-		 angle_to_radian(11, 34, 2.18), angle_to_radian(226, 10, 24.04));//前加减小 后减减小
-	 //X=0.115米  Y=0.659米  X=0.105米  Y=0.658米 X=0.101米  Y=0.651米 61度48分24.44秒 175度56分1.78秒
-	 Cirthree(convert(115, 659, x, y,scale).x, convert(115, 659, x, y,scale).y, convert(105, 658, x, y,scale).x, convert(105, 658, x, y,scale).y, convert(101, 651, x, y,scale).x, convert(101, 651, x, y,scale).y,
-		 angle_to_radian(61, 48, 24.44), angle_to_radian(175, 59, 1.78));//前加减小 后减减小
-	 //  X=0.110米  Y=0.653米
-	 BoundaryFill(convert(110, 653, x, y,scale).x, convert(110, 653, x, y,scale).y,rgb);
-	 Sleep(100);
-
-	 // X=0.103米  Y=0.665米  X=0.096米  Y=0.656米  X=0.091米  Y=0.657米 7度6分59.98秒 242度31分15.10秒
-	 Cirthree(convert(103, 665, x, y,scale).x, convert(103, 665, x, y,scale).y, convert(96, 656, x, y,scale).x, convert(96, 656, x, y,scale).y, convert(91, 657, x, y,scale).x, convert(91, 657, x, y,scale).y,
-		 angle_to_radian(7, 6, 59.98), angle_to_radian(242, 31, 15.1));//前加减小 后减减小
-	 //X=0.103米  Y=0.665米  X=0.098米  Y=0.667米  X=0.091米  Y=0.657米 57度19分9.55秒 192度19分5.54秒
-	 Cirthree(convert(103, 665, x, y,scale).x, convert(103, 665, x, y,scale).y, convert(98, 667, x, y,scale).x, convert(98, 667, x, y,scale).y, convert(91, 657, x, y,scale).x, convert(91, 657, x, y,scale).y,
-		 angle_to_radian(57, 19, 9.55), angle_to_radian(192, 19, 5.54));//前加减小 后减减小
-		 //  X=0.095米  Y=0.659米
-	 BoundaryFill(convert(95, 659, x, y,scale).x, convert(95, 659, x, y,scale).y,rgb);
-	 Sleep(100);
-
-	 //  X=0.096米  Y=0.648米  X=0.085米  Y=0.630米  X=0.074米  Y=0.632米 13度3分12.91秒 239度15分54.89秒
-	 Cirthree(convert(96, 648, x, y,scale).x, convert(96, 648, x, y,scale).y, convert(85, 630, x, y,scale).x, convert(85, 630, x, y,scale).y, convert(74, 632, x, y,scale).x, convert(74, 632, x, y,scale).y,
-		 angle_to_radian(13, 3, 12.91), angle_to_radian(239, 15, 54.89));//前加减小 后减减小
-	 //X=0.096米  Y=0.648米  X=0.087米  Y=0.650米   X=0.074米  Y=0.632米 59度0分34.03秒 193度18分33.76秒
-	 Cirthree(convert(96, 648, x, y,scale).x, convert(96, 648, x, y,scale).y, convert(87, 650, x, y,scale).x, convert(87, 650, x, y,scale).y, convert(74, 632, x, y,scale).x, convert(74, 632, x, y,scale).y,
-		 angle_to_radian(59, 0, 34.03), angle_to_radian(193, 18, 33.76));//前加减小 后减减小
-	 //  X=0.090米  Y=0.642米
-	 BoundaryFill(convert(90, 642, x, y,scale).x, convert(90, 642, x, y,scale).y, rgb);
- }
+// void FillLeftEar(int x,int y, COLORREF rgb,double scale){
+//	/* 先绘制颜色填充的*/
+//		/*左边耳朵颜色填充*/
+//		setlinestyle(PS_SOLID, 5);
+//		//设置线色
+//		setlinecolor(rgb);
+//		//直线 X=0.445米  Y=0.436米    X=0.451米  Y=0.453米 
+//		line(convert(445, 436, x, y,scale).x, convert(445, 436, x, y,scale).y, convert(451, 453, x, y,scale).x, convert(451, 453, x, y,scale).y);
+//		//X=0.445米  Y=0.436米  X=0.420米  Y=0.440米
+//		line(convert(445, 436, x, y,scale).x, convert(445, 436, x, y,scale).y, convert(420, 440, x, y,scale).x, convert(420, 440, x, y,scale).y);
+//		//X=0.451米  Y=0.453米   X=0.432米  Y=0.461米
+//		line(convert(451, 453, x, y,scale).x, convert(451, 453, x, y,scale).y, convert(432, 461, x, y,scale).x, convert(432, 461, x, y,scale).y);
+//		//X = 0.432米  Y = 0.461米 X=0.427米  Y=0.451米 X=0.420米  Y=0.440米 338度16分33.76秒 320度18分27.11秒
+//		Cirthree(convert(432, 461, x, y,scale).x, convert(432, 461, x, y,scale).y, convert(427, 451, x, y,scale).x, convert(427, 451, x, y,scale).y, convert(420, 440, x, y,scale).x, convert(420, 440, x, y,scale).y,
+//			angle_to_radian(338, 16, 33.76), angle_to_radian(320, 18, 27.11));
+//		//填充颜色 X=0.437米  Y=0.447米 
+//		BoundaryFill(convert(437, 447, x, y,scale).x, convert(437, 447, x, y,scale).y,rgb);
+//		//设置线型
+//		setlinestyle(PS_SOLID, 5);
+//		//设置线色
+//		setlinecolor(bk);
+//		line(convert(445, 436, x, y,scale).x, convert(445, 436, x, y,scale).y, convert(451, 453, x, y,scale).x, convert(451, 453, x, y,scale).y);
+//		//X=0.445米  Y=0.436米  X=0.420米  Y=0.440米
+//		line(convert(445, 436, x, y,scale).x, convert(445, 436, x, y,scale).y, convert(420, 440, x, y,scale).x, convert(420, 440, x, y,scale).y);
+//		//X=0.451米  Y=0.453米   X=0.432米  Y=0.461米
+//		line(convert(451, 453, x, y,scale).x, convert(451, 453, x, y,scale).y, convert(432, 461, x, y,scale).x, convert(432, 461, x, y,scale).y);
+//		//X = 0.432米  Y = 0.461米 X=0.427米  Y=0.451米 X=0.420米  Y=0.440米 338度16分33.76秒 320度18分27.11秒
+//		Cirthree(convert(432, 461, x, y,scale).x, convert(432, 461, x, y,scale).y, convert(427, 451, x, y,scale).x, convert(427, 451, x, y,scale).y, convert(420, 440, x, y,scale).x, convert(420, 440, x, y,scale).y,
+//			angle_to_radian(338, 16, 33.76), angle_to_radian(320, 18, 27.11));
+// }
+// /// <summary>
+// /// 填充右耳朵颜色
+// /// </summary>
+// /// <param name="x">指定坐标X</param>
+// /// <param name="y">指定坐标Y</param>
+// /// <param name="r">R</param>
+// /// <param name="g">G</param>
+// /// <param name="b">B</param>
+// void FillRightEar(int x,int y, COLORREF rgb,double scale) {
+//	/* 右边耳朵颜色填充*/
+//	setlinestyle(PS_SOLID, 5);
+//	//设置线色
+//	setlinecolor(rgb);
+//	//直线  X=0.378米  Y=0.686米  X=0.362米  Y=0.696米 
+//	line(convert(378, 686, x, y,scale).x, convert(378, 686, x, y,scale).y, convert(362, 696, x, y,scale).x, convert(362, 696, x, y,scale).y);
+//	//
+//	//X=0.378米  Y=0.686米 X=0.365米  Y=0.665米 
+//	line(convert(378, 686, x, y,scale).x, convert(378, 686, x, y,scale).y, convert(365, 665, x, y,scale).x, convert(365, 665, x, y,scale).y);
+//	// X=0.362米  Y=0.696米 X=0.341米  Y=0.676米
+//	line(convert(362, 696, x, y,scale).x, convert(362, 696, x, y,scale).y, convert(341, 676, x, y,scale).x, convert(341, 676, x, y,scale).y);
+//	/*X=0.365米  Y=0.665米  X=0.354米  Y=0.671米   X=0.341米  Y=0.676米 59度45分41.34秒 70度36分34.68秒*/
+//	Cirthree(convert(365, 665, x, y,scale).x, convert(365, 665, x, y,scale).y, convert(354, 671, x, y,scale).x, convert(354, 671, x, y,scale).y, convert(341, 676, x, y,scale).x, convert(341, 676, x, y,scale).y,
+//		angle_to_radian(59, 45, 41.34), angle_to_radian(70, 36, 34.68));
+//	//填充颜色  X=0.363米  Y=0.679米  
+//	BoundaryFill(convert(363, 679, x, y,scale).x, convert(363, 679, x, y,scale).y,rgb);
+//	//设置线型
+//	setlinestyle(PS_SOLID, 5);
+//	//设置线色
+//	setlinecolor(bk);
+//	//直线  X=0.378米  Y=0.686米  X=0.362米  Y=0.696米 
+//	line(convert(378, 686, x, y,scale).x, convert(378, 686, x, y,scale).y, convert(362, 696, x, y,scale).x, convert(362, 696, x, y,scale).y);
+//	//
+//	/*X=0.378米  Y=0.686米 X=0.365米  Y=0.665米 */
+//	line(convert(378, 686, x, y,scale).x, convert(378, 686, x, y,scale).y, convert(365, 665, x, y,scale).x, convert(365, 665, x, y,scale).y);
+//	// X=0.362米  Y=0.696米 X=0.341米  Y=0.676米
+//	line(convert(362, 696, x, y,scale).x, convert(362, 696, x, y,scale).y, convert(341, 676, x, y,scale).x, convert(341, 676, x, y,scale).y);
+//	//X=0.365米  Y=0.665米  X=0.354米  Y=0.671米   X=0.341米  Y=0.676米 59度45分41.34秒 70度36分34.68秒
+//	Cirthree(convert(365, 665, x, y,scale).x, convert(365, 665, x, y,scale).y, convert(354, 671, x, y,scale).x, convert(354, 671, x, y,scale).y, convert(341, 676, x, y,scale).x, convert(341, 676, x, y,scale).y,
+//		angle_to_radian(59, 45, 41.34), angle_to_radian(70, 36, 34.68));
+// }
+// /// <summary>
+// /// 填充胡萝卜颜色
+// /// </summary>
+// /// <param name="x">指定坐标X</param>
+// /// <param name="y">指定坐标Y</param>
+// /// <param name="r">R</param>
+// /// <param name="g">G</param>
+// /// <param name="b">B</param>
+// void FillCarrot(int x, int y, COLORREF rgb,double scale) {
+//	/* 胡萝卜填充*/
+//		setlinestyle(PS_SOLID, 5);
+//		//设置线色
+//		setlinecolor(rgb);
+//		Cirthree(convert(182, 445, x, y,scale).x, convert(182, 445, x, y,scale).y, convert(196, 443, x, y,scale).x, convert(196, 443, x, y,scale).y, convert(208, 455, x, y,scale).x, convert(208, 455, x, y,scale).y,
+//			angle_to_radian(235, 10, 22.8), angle_to_radian(347, 4, 4.18));//前加减小 后减减小
+//			//X=0.208米  Y=0.455米  X=0.204米  Y=0.485米    X=0.202米  Y=0.488米 352度52分48.42秒 27度1分47.81秒
+//		Cirthree(convert(208, 455, x, y,scale).x, convert(208, 455, x, y,scale).y, convert(204, 485, x, y,scale).x, convert(204, 485, x, y,scale).y, convert(202, 488, x, y,scale).x, convert(202, 488, x, y,scale).y,
+//			angle_to_radian(352, 52, 48.42), angle_to_radian(27, 1, 47.81));//前加减小 后减减小
+//			// X=0.202米  Y=0.488米   X=0.197米  Y=0.545米    X=0.199米  Y=0.551米 204度52分26.34秒 160度30分24.25秒
+//		Cirthree(convert(202, 488, x, y,scale).x, convert(202, 488, x, y,scale).y, convert(197, 545, x, y,scale).x, convert(197, 545, x, y,scale).y, convert(199, 551, x, y,scale).x, convert(199, 551, x, y,scale).y,
+//			angle_to_radian(204, 52, 26.34)-0.1, angle_to_radian(160, 30, 24.25));//前加减小 后减减小
+//		//4  X=0.199米  Y=0.551米  X=0.189米  Y=0.558米  X=0.177米  Y=0.559米  39度26分10.94秒 100度12分16.85秒
+//		Cirthree(convert(199, 551, x, y,scale).x, convert(199, 551, x, y,scale).y, convert(189, 558, x, y,scale).x, convert(189, 558, x, y,scale).y, convert(177, 559, x, y,scale).x, convert(177, 559, x, y,scale).y,
+//			angle_to_radian(39, 26, 10.94) , angle_to_radian(100, 12, 16.85));//前加减小 后减减小
+//		//X=0.163米  Y=0.592米 X=0.173米  Y=0.576米   X=0.178米  Y=0.557米 34度40分23.80秒 2度53分37.42秒
+//		Cirthree(convert(163, 592, x, y,scale).x, convert(163, 592, x, y,scale).y, convert(173, 576, x, y,scale).x, convert(173, 576, x, y,scale).y, convert(178, 557, x, y,scale).x, convert(178, 557, x, y,scale).y,
+//			angle_to_radian(34, 40, 23.8) - 0.1, angle_to_radian(2, 53, 37.42));//前加减小 后减减小
+//		//X=0.178米  Y=0.557米  X=0.169米  Y=0.541米 X=0.146米  Y=0.541米 357度17分30.34秒 235度17分53.72秒
+//		Cirthree(convert(178, 557, x, y,scale).x, convert(178, 557, x, y,scale).y, convert(169, 541, x, y,scale).x, convert(169, 541, x, y,scale).y, convert(146, 541, x, y,scale).x, convert(146, 541, x, y,scale).y,
+//			angle_to_radian(357, 17, 30.34), angle_to_radian(235, 17, 53.72));//前加减小 后减减小
+//		//X=0.146米  Y=0.541米  X=0.128米  Y=0.556米   X=0.116米  Y=0.576米 236度32分55.32秒 204度36分28.89秒
+//		Cirthree(convert(146, 541, x, y,scale).x, convert(146, 541, x, y,scale).y, convert(128, 556, x, y,scale).x, convert(128, 556, x, y,scale).y, convert(116, 576, x, y,scale).x, convert(116, 576, x, y,scale).y,
+//			angle_to_radian(236, 32, 55.32), angle_to_radian(204, 36, 28.89));//前加减小 后减减小
+//			//7   X=0.139米  Y=0.546米  X=0.152米  Y=0.493米  X=0.170米  Y=0.462米 184度30分26.61秒 216度49分29.37秒
+//		Cirthree(convert(139, 546, x, y,scale).x, convert(139, 546, x, y,scale).y, convert(152, 493, x, y,scale).x, convert(152, 493, x, y,scale).y, convert(170, 462, x, y,scale).x, convert(170, 462, x, y,scale).y,
+//			angle_to_radian(184, 30, 26.61), angle_to_radian(216, 49, 29.37));//前加减小 后减减小
+//		//X=0.177米  Y=0.415米  X=0.182米  Y=0.435米    X=0.180米  Y=0.457米 338度9分26.11秒 13度17分49.62秒
+//		Cirthree(convert(177, 415, x, y,scale).x, convert(177, 415, x, y,scale).y, convert(182, 435, x, y,scale).x, convert(182, 435, x, y,scale).y, convert(180, 457, x, y,scale).x, convert(180, 457, x, y,scale).y,
+//			angle_to_radian(338, 9, 26.11), angle_to_radian(13, 17, 49.62));//前加减小 后减减小
+//		//X=0.180米  Y=0.456米  X=0.175米  Y=0.461米  X=0.162米  Y=0.458米 22度59分33.74秒 143度0分4.64秒
+//		Cirthree(convert(180, 456, x, y,scale).x, convert(180, 456, x, y,scale).y, convert(175, 461, x, y,scale).x, convert(175, 461, x, y,scale).y, convert(162, 458, x, y,scale).x, convert(162, 458, x, y,scale).y,
+//			angle_to_radian(22, 59, 33.74), angle_to_radian(143, 0, 4.64));//前加减小 后减减小
+//		//填充颜色   X=0.178米  Y=0.497米
+//			BoundaryFill(convert(178, 497, x, y,scale).x, convert(178, 497, x, y,scale).y,rgb);
+//			//设置线型
+//			setlinestyle(PS_SOLID, 5);
+//			//设置线色
+//			setlinecolor(bk);
+//	Cirthree(convert(182, 445, x, y,scale).x, convert(182, 445, x, y,scale).y, convert(196, 443, x, y,scale).x, convert(196, 443, x, y,scale).y, convert(208, 455, x, y,scale).x, convert(208, 455, x, y,scale).y,
+//			angle_to_radian(235, 10, 22.8), angle_to_radian(347, 4, 4.18));//前加减小 后减减小
+//			//X=0.208米  Y=0.455米  X=0.204米  Y=0.485米    X=0.202米  Y=0.488米 352度52分48.42秒 27度1分47.81秒
+//		Cirthree(convert(208, 455, x, y,scale).x, convert(208, 455, x, y,scale).y, convert(204, 485, x, y,scale).x, convert(204, 485, x, y,scale).y, convert(202, 488, x, y,scale).x, convert(202, 488, x, y,scale).y,
+//			angle_to_radian(352, 52, 48.42), angle_to_radian(27, 1, 47.81));//前加减小 后减减小
+//			// X=0.202米  Y=0.488米   X=0.197米  Y=0.545米    X=0.199米  Y=0.551米 204度52分26.34秒 160度30分24.25秒
+//		Cirthree(convert(202, 488, x, y,scale).x, convert(202, 488, x, y,scale).y, convert(197, 545, x, y,scale).x, convert(197, 545, x, y,scale).y, convert(199, 551, x, y,scale).x, convert(199, 551, x, y,scale).y,
+//			angle_to_radian(204, 52, 26.34)-0.1, angle_to_radian(160, 30, 24.25));//前加减小 后减减小
+//		//4  X=0.199米  Y=0.551米  X=0.189米  Y=0.558米  X=0.177米  Y=0.559米  39度26分10.94秒 100度12分16.85秒
+//		Cirthree(convert(199, 551, x, y,scale).x, convert(199, 551, x, y,scale).y, convert(189, 558, x, y,scale).x, convert(189, 558, x, y,scale).y, convert(177, 559, x, y,scale).x, convert(177, 559, x, y,scale).y,
+//			angle_to_radian(39, 26, 10.94) , angle_to_radian(100, 12, 16.85));//前加减小 后减减小
+//		//X=0.163米  Y=0.592米 X=0.173米  Y=0.576米   X=0.178米  Y=0.557米 34度40分23.80秒 2度53分37.42秒
+//		Cirthree(convert(163, 592, x, y,scale).x, convert(163, 592, x, y,scale).y, convert(173, 576, x, y,scale).x, convert(173, 576, x, y,scale).y, convert(178, 557, x, y,scale).x, convert(178, 557, x, y,scale).y,
+//			angle_to_radian(34, 40, 23.8) - 0.1, angle_to_radian(2, 53, 37.42));//前加减小 后减减小
+//		//X=0.178米  Y=0.557米  X=0.169米  Y=0.541米 X=0.146米  Y=0.541米 357度17分30.34秒 235度17分53.72秒
+//		Cirthree(convert(178, 557, x, y,scale).x, convert(178, 557, x, y,scale).y, convert(169, 541, x, y,scale).x, convert(169, 541, x, y,scale).y, convert(146, 541, x, y,scale).x, convert(146, 541, x, y,scale).y,
+//			angle_to_radian(357, 17, 30.34), angle_to_radian(235, 17, 53.72));//前加减小 后减减小
+//		//X=0.146米  Y=0.541米  X=0.128米  Y=0.556米   X=0.116米  Y=0.576米 236度32分55.32秒 204度36分28.89秒
+//		Cirthree(convert(146, 541, x, y,scale).x, convert(146, 541, x, y,scale).y, convert(128, 556, x, y,scale).x, convert(128, 556, x, y,scale).y, convert(116, 576, x, y,scale).x, convert(116, 576, x, y,scale).y,
+//			angle_to_radian(236, 32, 55.32), angle_to_radian(204, 36, 28.89));//前加减小 后减减小
+//			//7   X=0.139米  Y=0.546米  X=0.152米  Y=0.493米  X=0.170米  Y=0.462米 184度30分26.61秒 216度49分29.37秒
+//		Cirthree(convert(139, 546, x, y,scale).x, convert(139, 546, x, y,scale).y, convert(152, 493, x, y,scale).x, convert(152, 493, x, y,scale).y, convert(170, 462, x, y,scale).x, convert(170, 462, x, y,scale).y,
+//			angle_to_radian(184, 30, 26.61), angle_to_radian(216, 49, 29.37));//前加减小 后减减小
+//		//X=0.177米  Y=0.415米  X=0.182米  Y=0.435米    X=0.180米  Y=0.457米 338度9分26.11秒 13度17分49.62秒
+//		Cirthree(convert(177, 415, x, y,scale).x, convert(177, 415, x, y,scale).y, convert(182, 435, x, y,scale).x, convert(182, 435, x, y,scale).y, convert(180, 457, x, y,scale).x, convert(180, 457, x, y,scale).y,
+//			angle_to_radian(338, 9, 26.11), angle_to_radian(13, 17, 49.62));//前加减小 后减减小
+//		//X=0.180米  Y=0.456米  X=0.175米  Y=0.461米  X=0.162米  Y=0.458米 22度59分33.74秒 143度0分4.64秒
+//		Cirthree(convert(180, 456, x, y,scale).x, convert(180, 456, x, y,scale).y, convert(175, 461, x, y,scale).x, convert(175, 461, x, y,scale).y, convert(162, 458, x, y,scale).x, convert(162, 458, x, y,scale).y,
+//			angle_to_radian(22, 59, 33.74), angle_to_radian(143, 0, 4.64));//前加减小 后减减小
+// }
+// /// <summary>
+// /// 填充绿叶颜色
+// /// </summary>
+// /// <param name="x">指定坐标X</param>
+// /// <param name="y">指定坐标Y</param>
+// /// <param name="r">R</param>
+// /// <param name="g">G</param>
+// /// <param name="b">B</param>
+// void FillLeaf(int x, int y, COLORREF rgb,double scale) {
+//	 //绿叶填充
+//	 setlinestyle(PS_SOLID, 5);
+//	 	//设置线色
+//	 	setlinecolor(rgb);
+//	 //绿叶
+//	 	//11  X=0.195米  Y=0.555米 X=0.204米  Y=0.565米 X=0.206米  Y=0.578米 304度0分44.27秒 2度14分2.70秒
+//	 Cirthree(convert(195, 555, x, y,scale).x, convert(195, 555, x, y,scale).y, convert(204, 565, x, y,scale).x, convert(204, 565, x, y,scale).y, convert(206, 578, x, y,scale).x, convert(206, 578, x, y,scale).y,
+//	 	angle_to_radian(304, 0, 44.27) + 0.2, angle_to_radian(2, 14, 2.7));//前加减小 后减减小
+//	 //12  X=0.206米  Y=0.578米  X=0.200米  Y=0.586米  X=0.188米  Y=0.580米 9度59分48.96秒 158度8分5.94秒
+//	 Cirthree(convert(206, 578, x, y,scale).x, convert(206, 578, x, y,scale).y, convert(200, 586, x, y,scale).x, convert(200, 586, x, y,scale).y, convert(188, 580, x, y,scale).x, convert(188, 580, x, y,scale).y,
+//	 	angle_to_radian(9, 59, 48.96), angle_to_radian(158, 8, 5.94));//前加减小 后减减小
+//	 //13  X=0.188米  Y=0.580米  X=0.181米  Y=0.593米 X=0.168米  Y=0.586米 343度34分17.94秒 163度17分6.93秒
+//	 Cirthree(convert(188, 580, x, y,scale).x, convert(188, 580, x, y,scale).y, convert(181, 593, x, y,scale).x, convert(181, 593, x, y,scale).y, convert(168, 586, x, y,scale).x, convert(168, 586, x, y,scale).y,
+//	 	angle_to_radian(343, 34, 17.94), angle_to_radian(163, 17, 6.93));//前加减小 后减减小
+//	 //X=0.163米  Y=0.592米 X=0.173米  Y=0.576米   X=0.178米  Y=0.557米 34度40分23.80秒 2度53分37.42秒
+//	 Cirthree(convert(163, 592, x, y,scale).x, convert(163, 592, x, y,scale).y, convert(173, 576, x, y,scale).x, convert(173, 576, x, y,scale).y, convert(178, 557, x, y,scale).x, convert(178, 557, x, y,scale).y,
+//	 	angle_to_radian(34, 40, 23.8) - 0.1, angle_to_radian(2, 53, 37.42));//前加减小 后减减小
+//	 //4  X=0.199米  Y=0.551米  X=0.189米  Y=0.558米  X=0.177米  Y=0.559米  39度26分10.94秒 100度12分16.85秒
+//		 Cirthree(convert(199, 551, x, y,scale).x, convert(199, 551, x, y,scale).y, convert(189, 558, x, y,scale).x, convert(189, 558, x, y,scale).y, convert(177, 559, x, y,scale).x, convert(177, 559, x, y,scale).y,
+//		 	angle_to_radian(39, 26, 10.94) , angle_to_radian(100, 12, 16.85));//前加减小 后减减小
+//	 //填充颜色    X=0.188米  Y=0.571米 
+//			 BoundaryFill(convert(188, 571, x, y,scale).x, convert(188, 571, x, y,scale).y,rgb);
+//			 //设置线型
+//			 setlinestyle(PS_SOLID, 5);
+//			 //设置线色
+//			 setlinecolor(bk);
+// //绿叶
+//	 	//11  X=0.195米  Y=0.555米 X=0.204米  Y=0.565米 X=0.206米  Y=0.578米 304度0分44.27秒 2度14分2.70秒
+//	 Cirthree(convert(195, 555, x, y,scale).x, convert(195, 555, x, y,scale).y, convert(204, 565, x, y,scale).x, convert(204, 565, x, y,scale).y, convert(206, 578, x, y,scale).x, convert(206, 578, x, y,scale).y,
+//	 	angle_to_radian(304, 0, 44.27) + 0.2, angle_to_radian(2, 14, 2.7));//前加减小 后减减小
+//	 //12  X=0.206米  Y=0.578米  X=0.200米  Y=0.586米  X=0.188米  Y=0.580米 9度59分48.96秒 158度8分5.94秒
+//	 Cirthree(convert(206, 578, x, y,scale).x, convert(206, 578, x, y,scale).y, convert(200, 586, x, y,scale).x, convert(200, 586, x, y,scale).y, convert(188, 580, x, y,scale).x, convert(188, 580, x, y,scale).y,
+//	 	angle_to_radian(9, 59, 48.96), angle_to_radian(158, 8, 5.94));//前加减小 后减减小
+//	 //13  X=0.188米  Y=0.580米  X=0.181米  Y=0.593米 X=0.168米  Y=0.586米 343度34分17.94秒 163度17分6.93秒
+//	 Cirthree(convert(188, 580, x, y,scale).x, convert(188, 580, x, y,scale).y, convert(181, 593, x, y,scale).x, convert(181, 593, x, y,scale).y, convert(168, 586, x, y,scale).x, convert(168, 586, x, y,scale).y,
+//	 	angle_to_radian(343, 34, 17.94), angle_to_radian(163, 17, 6.93));//前加减小 后减减小
+//	 //X=0.163米  Y=0.592米 X=0.173米  Y=0.576米   X=0.178米  Y=0.557米 34度40分23.80秒 2度53分37.42秒
+//	 Cirthree(convert(163, 592, x, y,scale).x, convert(163, 592, x, y,scale).y, convert(173, 576, x, y,scale).x, convert(173, 576, x, y,scale).y, convert(178, 557, x, y,scale).x, convert(178, 557, x, y,scale).y,
+//	 	angle_to_radian(34, 40, 23.8) - 0.1, angle_to_radian(2, 53, 37.42));//前加减小 后减减小
+//	 //4  X=0.199米  Y=0.551米  X=0.189米  Y=0.558米  X=0.177米  Y=0.559米  39度26分10.94秒 100度12分16.85秒
+//		 Cirthree(convert(199, 551, x, y,scale).x, convert(199, 551, x, y,scale).y, convert(189, 558, x, y,scale).x, convert(189, 558, x, y,scale).y, convert(177, 559, x, y,scale).x, convert(177, 559, x, y,scale).y,
+//		 	angle_to_radian(39, 26, 10.94) , angle_to_radian(100, 12, 16.85));//前加减小 后减减小
+// }
+// /// <summary>
+///// 填充眼睛颜色
+///// </summary>
+///// <param name="x">指定坐标X</param>
+///// <param name="y">指定坐标Y</param>
+///// <param name="r">R</param>
+///// <param name="g">G</param>
+///// <param name="b">B</param>
+// void FillEyes(int x, int y, COLORREF rgb,double scale) {
+//	 setlinestyle(PS_SOLID, 3);
+//	 //设置线色
+//	 setlinecolor(rgb);
+//	 //左眼
+//	//14   X=0.320米  Y=0.476米 X=0.333米  Y=0.485米  X=0.336米  Y=0.493米 285度34分1.95秒 348度7分58.59秒
+//	 Cirthree(convert(320, 476, x, y,scale).x, convert(320, 476, x, y,scale).y, convert(333, 485, x, y,scale).x, convert(333, 485, x, y,scale).y, convert(336, 493, x, y,scale).x, convert(336, 493, x, y,scale).y,
+//		 angle_to_radian(285, 34, 1.95), angle_to_radian(348, 7, 58.59));//前加减小 后减减小
+//	 //15   X=0.336米  Y=0.493米 X=0.332米  Y=0.503米 X=0.326米  Y=0.505米 355度19分23.78秒 90度28分44.97秒
+//	 Cirthree(convert(336, 493, x, y,scale).x, convert(336, 493, x, y,scale).y, convert(332, 503, x, y,scale).x, convert(332, 503, x, y,scale).y, convert(326, 505, x, y,scale).x, convert(326, 505, x, y,scale).y,
+//		 angle_to_radian(355, 19, 23.78), angle_to_radian(90, 28, 44.97));//前加减小 后减减小
+//	 //16   X=0.326米  Y=0.505米  X=0.308米  Y=0.498米  X=0.301米  Y=0.480米  85度38分9.36秒 184度18分40.34秒
+//	 Cirthree(convert(326, 505, x, y,scale).x, convert(326, 505, x, y,scale).y, convert(308, 498, x, y,scale).x, convert(308, 498, x, y,scale).y, convert(301, 480, x, y,scale).x, convert(301, 480, x, y,scale).y,
+//		 angle_to_radian(85, 38, 9.36), angle_to_radian(184, 18, 40.34));//前加减小 后减减小
+//	 //17   X=0.301米  Y=0.480米   X=0.314米  Y=0.474米  X=0.320米  Y=0.476米 222度52分32.60秒 294度24分49.26秒
+//	 Cirthree(convert(301, 480, x, y,scale).x, convert(301, 480, x, y,scale).y, convert(314, 474, x, y,scale).x, convert(314, 474, x, y,scale).y, convert(320, 476, x, y,scale).x, convert(320, 476, x, y,scale).y,
+//		 angle_to_radian(222, 52, 32.6), angle_to_radian(294, 24, 49.26));//前加减小 后减减小
+//	 //19    X=0.320米  Y=0.491米 X=0.327米  Y=0.488米 X=0.330米  Y=0.492米 197度24分32.69秒 352度36分56.48秒
+//	 Cirthree(convert(320, 491, x, y,scale).x, convert(320, 491, x, y,scale).y, convert(327, 488, x, y,scale).x, convert(327, 488, x, y,scale).y, convert(330, 492, x, y,scale).x, convert(330, 492, x, y,scale).y,
+//		 angle_to_radian(197, 24, 32.69), angle_to_radian(352, 36, 56.48) + 1.7);//前加减小 后减减小
+//	 // X=0.330米  Y=0.492米 X=0.328米  Y=0.496米  X=0.325米  Y=0.497米 1度22分48.28秒 93度16分57.13秒
+//	 Cirthree(convert(330, 492, x, y,scale).x, convert(330, 492, x, y,scale).y, convert(328, 496, x, y,scale).x, convert(328, 496, x, y,scale).y, convert(325, 497, x, y,scale).x, convert(325, 497, x, y,scale).y,
+//		 angle_to_radian(1, 22, 48.28) + 1.3, angle_to_radian(93, 16, 57.13));//前加减小 后减减小
+//	 // X=0.325米  Y=0.497米  X=0.321米  Y=0.494米  X=0.320米  Y=0.491米 98度35分16.88秒 方位角=174度23分34.16秒
+//	 Cirthree(convert(325, 497, x, y,scale).x, convert(325, 497, x, y,scale).y, convert(321, 494, x, y,scale).x, convert(321, 494, x, y,scale).y, convert(320, 491, x, y,scale).x, convert(320, 491, x, y,scale).y,
+//		 angle_to_radian(98, 35, 16.88), angle_to_radian(174, 23, 34.16));//前加减小 后减减小
+//	 //18
+//	 //X=0.320米  Y=0.476米 X=0.304米  Y=0.441米   X=0.301米  Y=0.480米  49度25分12.66秒 107度52分9.20秒
+//	 Cirthree(convert(320, 476, x, y,scale).x, convert(320, 476, x, y,scale).y, convert(304, 441, x, y,scale).x, convert(304, 441, x, y,scale).y, convert(301, 480, x, y,scale).x, convert(301, 480, x, y,scale).y,
+//		 angle_to_radian(49, 25, 12.66) + 0.3, angle_to_radian(107, 52, 9.2) + 0.5);//前加减小 后减减小
+//	  //填充颜色    X=0.311米  Y=0.488米
+//	 BoundaryFill(convert(311, 488, x, y,scale).x, convert(311, 488, x, y,scale).y,rgb);
+//	 Sleep(100);
+//
+//	 //右眼
+//	 //23  X=0.297米  Y=0.571米  X=0.305米  Y=0.578米 X=0.307米  Y=0.589米   290度23分17.75秒 8度41分14.46秒  
+//	 Cirthree(convert(297, 571, x, y,scale).x, convert(297, 571, x, y,scale).y, convert(305, 578, x, y,scale).x, convert(305, 578, x, y,scale).y, convert(307, 589, x, y,scale).x, convert(307, 589, x, y,scale).y,
+//		 angle_to_radian(290, 23, 17.75), angle_to_radian(8, 41, 14.46));//前加减小 后减减小
+//	 //20 X=0.307米  Y=0.589米  X=0.295米  Y=0.597米  X=0.281米  Y=0.594米 33度54分37.10秒 124度46分51.43秒   
+//	 Cirthree(convert(307, 589, x, y,scale).x, convert(307, 589, x, y,scale).y, convert(295, 597, x, y,scale).x, convert(295, 597, x, y,scale).y, convert(281, 594, x, y,scale).x, convert(281, 594, x, y,scale).y,
+//		 angle_to_radian(33, 54, 37.1), angle_to_radian(124, 46, 51.43));//前加减小 后减减小
+//	 //21  X=0.281米  Y=0.594米  X=0.273米  Y=0.588米  X=0.270米  Y=0.576米 110度6分20.99秒 182度51分36.95秒  
+//	 Cirthree(convert(281, 594, x, y,scale).x, convert(281, 594, x, y,scale).y, convert(273, 588, x, y,scale).x, convert(273, 588, x, y,scale).y, convert(270, 576, x, y,scale).x, convert(270, 576, x, y,scale).y,
+//		 angle_to_radian(110, 6, 20.99), angle_to_radian(182, 51, 36.95));//前加减小 后减减小
+//	 //22  X=0.270米  Y=0.576米  X=0.285米  Y=0.568米   X=0.297米  Y=0.571米 214度33分24.28秒 302度49分44.41秒  
+//	 Cirthree(convert(270, 576, x, y,scale).x, convert(270, 576, x, y,scale).y, convert(285, 568, x, y,scale).x, convert(285, 568, x, y,scale).y, convert(297, 571, x, y,scale).x, convert(297, 571, x, y,scale).y,
+//		 angle_to_radian(214, 33, 24.28), angle_to_radian(302, 49, 44.41));//前加减小 后减减小
+//	 //24  X=0.300米  Y=0.583米  X=0.296米  Y=0.578米   X=0.291米  Y=0.583米 359度59分60.00秒 182度7分45.49秒   
+//	 Cirthree(convert(300, 583, x, y,scale).x, convert(300, 583, x, y,scale).y, convert(296, 578, x, y,scale).x, convert(296, 578, x, y,scale).y, convert(291, 583, x, y,scale).x, convert(291, 583, x, y,scale).y,
+//		 angle_to_radian(359, 59, 60), angle_to_radian(182, 7, 45.49) - 0.5);//前加减小 后减减小
+//	 //X=0.300米  Y=0.583米  X=0.297米  Y=0.587米   X=0.291米  Y=0.583米 6度45分29.16秒 175度22分16.34秒
+//	 Cirthree(convert(300, 583, x, y,scale).x, convert(300, 583, x, y,scale).y, convert(297, 587, x, y,scale).x, convert(297, 587, x, y,scale).y, convert(291, 583, x, y,scale).x, convert(291, 583, x, y,scale).y,
+//		 angle_to_radian(359, 59, 60), angle_to_radian(182, 7, 45.49) - 0.2);//前加减小 后减减小
+//	 // 25  X=0.281米  Y=0.594米 X=0.242米  Y=0.587米  X=0.270米  Y=0.576米  357度25分51.22秒 296度58分46.19秒
+//	 Cirthree(convert(281, 594, x, y,scale).x, convert(281, 594, x, y,scale).y, convert(242, 587, x, y,scale).x, convert(242, 587, x, y,scale).y, convert(270, 576, x, y,scale).x, convert(270, 576, x, y,scale).y,
+//		 angle_to_radian(357, 25, 51.22) - 0.2, angle_to_radian(296, 58, 46.19));//前加减小 后减减小
+//	   //填充颜色    X=0.282米  Y=0.579米 
+//	 BoundaryFill(convert(282, 579, x, y,scale).x, convert(282, 579, x, y,scale).y, rgb);
+// }
+// /// <summary>
+///// 填充腮帮颜色
+///// </summary>
+///// <param name="x">指定坐标X</param>
+///// <param name="y">指定坐标Y</param>
+///// <param name="r">R</param>
+///// <param name="g">G</param>
+///// <param name="b">B</param>
+// void FillCheeks(int x, int y, COLORREF rgb,double scale) {
+//	 //逆时针 弧度1增加线开头变短 弧度2减小 末尾线变短
+//	 //顺时针 弧度1减小线开头变短 弧度2增加 末尾线变短
+//	 setlinestyle(PS_SOLID, 3);
+//	 //设置线色
+//	 setlinecolor(rgb);
+//	 //左腮
+//	 //17   X=0.301米  Y=0.480米   X=0.314米  Y=0.474米  X=0.320米  Y=0.476米 222度52分32.60秒 294度24分49.26秒
+//	 Cirthree(convert(301, 480, x, y,scale).x, convert(301, 480, x, y,scale).y, convert(314, 474, x, y,scale).x, convert(314, 474, x, y,scale).y, convert(320, 476, x, y,scale).x, convert(320, 476, x, y,scale).y,
+//		 angle_to_radian(222, 52, 32.6)+0.8, angle_to_radian(294, 24, 49.26));//前加减小 后减减小
+//	//18
+//	//X=0.320米  Y=0.476米 X=0.304米  Y=0.441米   X=0.301米  Y=0.480米  49度25分12.66秒 107度52分9.20秒
+//	 Cirthree(convert(320, 476, x, y,scale).x, convert(320, 476, x, y,scale).y, convert(304, 441, x, y,scale).x, convert(304, 441, x, y,scale).y, convert(301, 480, x, y,scale).x, convert(301, 480, x, y,scale).y,
+//		 angle_to_radian(49, 25, 12.66) + 0.35, angle_to_radian(107, 52, 9.2) + 0.3);//前加减小 后减减小
+//	   //填充颜色    X=0.303米  Y=0.455米
+//	 BoundaryFill(convert(303, 455, x, y,scale).x, convert(303, 455, x, y,scale).y,rgb);
+//	 Sleep(100);
+//
+//	 //右腮
+//	//21  X=0.281米  Y=0.594米  X=0.273米  Y=0.588米  X=0.270米  Y=0.576米 110度6分20.99秒 182度51分36.95秒  
+//	 Cirthree(convert(281, 594, x, y,scale).x, convert(281, 594, x, y,scale).y, convert(273, 588, x, y,scale).x, convert(273, 588, x, y,scale).y, convert(270, 576, x, y,scale).x, convert(270, 576, x, y,scale).y,
+//		 angle_to_radian(110, 6, 20.99), angle_to_radian(182, 51, 36.95));//前加减小 后减减小
+//	// 25  X=0.281米  Y=0.594米 X=0.242米  Y=0.587米  X=0.270米  Y=0.576米  357度25分51.22秒 296度58分46.19秒
+//	 Cirthree(convert(281, 594, x, y,scale).x, convert(281, 594, x, y,scale).y, convert(242, 587, x, y,scale).x, convert(242, 587, x, y,scale).y, convert(270, 576, x, y,scale).x, convert(270, 576, x, y,scale).y,
+//		 angle_to_radian(357, 25, 51.22) - 0.2, angle_to_radian(296, 58, 46.19));//前加减小 后减减小
+//		//填充颜色    : X=0.257米  Y=0.586米  
+//	 BoundaryFill(convert(257, 586, x, y,scale).x, convert(257, 586, x, y,scale).y, rgb);
+// }
+// /// <summary>
+///// 填充鼻子颜色
+///// </summary>
+///// <param name="x">指定坐标X</param>
+///// <param name="y">指定坐标Y</param>
+///// <param name="r">R</param>
+///// <param name="g">G</param>
+///// <param name="b">B</param>
+// void FillNose(int x, int y, COLORREF rgb,double scale) {
+//	 setlinestyle(PS_SOLID, 3);
+//	 //设置线色
+//	 setlinecolor(rgb);
+//	 //26 
+//	//X=0.298米  Y=0.525米  X=0.308米  Y=0.537米  X=0.293米  Y=0.541米  263度22分18.66秒 130度13分16.69秒
+//	 Cirthree(convert(298, 525, x, y,scale).x, convert(298, 525, x, y,scale).y, convert(308, 537, x, y,scale).x, convert(308, 537, x, y,scale).y, convert(293, 541, x, y,scale).x, convert(293, 541, x, y,scale).y,
+//		 angle_to_radian(263, 22, 18.66), angle_to_radian(130, 13, 16.69));//前加减小 后减减小
+//	 //27 
+//	 //X=0.299米  Y=0.525米  X=0.295米  Y=0.531米  X=0.296米  Y=0.543米 229度4分22.30秒 150度0分22.36秒
+//	 Cirthree(convert(299, 525, x, y,scale).x, convert(299, 525, x, y,scale).y, convert(295, 531, x, y,scale).x, convert(295, 531, x, y,scale).y, convert(296, 543, x, y,scale).x, convert(293, 543, x, y,scale).y,
+//		 angle_to_radian(229, 4, 22.3), angle_to_radian(150, 0, 22.36) - 0.5);//前加减小 后减减小
+//			//填充颜色    X=0.301米  Y=0.533米
+//	 BoundaryFill(convert(301, 533, x, y,scale).x, convert(301, 533, x, y,scale).y, rgb);
+// }
+// /// <summary>
+///// 填充嘴巴颜色
+///// </summary>
+///// <param name="x">指定坐标X</param>
+///// <param name="y">指定坐标Y</param>
+///// <param name="r">R</param>
+///// <param name="g">G</param>
+///// <param name="b">B</param>
+// void FillMouth(int x, int y, COLORREF rgb,double scale) {
+//	 setlinestyle(PS_SOLID, 3);
+//	 //设置线色
+//	 setlinecolor(rgb);
+//	 //28 
+//	//X=0.294米  Y=0.533米  X=0.284米  Y=0.514米  X=0.290米  Y=0.499米  122度50分28.32秒 223度27分28.35秒
+//	 Cirthree(convert(294, 533, x, y,scale).x, convert(294, 533, x, y,scale).y, convert(284, 514, x, y,scale).x, convert(284, 514, x, y,scale).y, convert(290, 499, x, y,scale).x, convert(290, 499, x, y,scale).y,
+//		 angle_to_radian(122, 50, 28.32), angle_to_radian(223, 27, 28.35));//前加减小 后减减小
+//	 //29 
+//	 //X=0.294米  Y=0.533米 X=0.280米  Y=0.540米  X=0.273米  Y=0.561米 257度43分39.66秒 174度6分13.43秒
+//	 Cirthree(convert(294, 533, x, y,scale).x, convert(294, 533, x, y,scale).y, convert(280, 540, x, y,scale).x, convert(280, 540, x, y,scale).y, convert(273, 561, x, y,scale).x, convert(273, 561, x, y,scale).y,
+//		 angle_to_radian(257, 43, 39.66), angle_to_radian(174, 6, 13.43));//前加减小 后减减小
+//	 //30 
+//	 // X=0.285米  Y=0.519米  X=0.270米  Y=0.516米   X=0.259米  Y=0.521米 297度57分10.55秒 235度54分32.11秒
+//	 Cirthree(convert(285, 519, x, y,scale).x, convert(285, 519, x, y,scale).y, convert(270, 516, x, y,scale).x, convert(270, 516, x, y,scale).y, convert(259, 521, x, y,scale).x, convert(259, 521, x, y,scale).y,
+//		 angle_to_radian(297, 57, 10.55), angle_to_radian(235, 54, 32.11) + 0.2);//前加减小 后减减小
+//	 //31
+//	 // X=0.280米  Y=0.540米  X=0.268米  Y=0.534米  X=0.259米  Y=0.521米 103度26分12.32秒 162度30分12.91秒
+//	 Cirthree(convert(280, 540, x, y,scale).x, convert(280, 540, x, y,scale).y, convert(268, 534, x, y,scale).x, convert(268, 534, x, y,scale).y, convert(259, 521, x, y,scale).x, convert(259, 521, x, y,scale).y,
+//		 angle_to_radian(103, 26, 12.32), angle_to_radian(162, 30, 12.91));//前加减小 后减减小
+//	// X=0.277米  Y=0.526米  
+//	 BoundaryFill(convert(277, 526, x, y,scale).x, convert(277, 526, x, y,scale).y, rgb);
+//	 //设置线型
+//	 setlinestyle(PS_SOLID, 3);
+//	 //设置线色
+//	 setlinecolor(bk);
+//	 //28 
+//   //X=0.294米  Y=0.533米  X=0.284米  Y=0.514米  X=0.290米  Y=0.499米  122度50分28.32秒 223度27分28.35秒
+//	 Cirthree(convert(294, 533, x, y,scale).x, convert(294, 533, x, y,scale).y, convert(284, 514, x, y,scale).x, convert(284, 514, x, y,scale).y, convert(290, 499, x, y,scale).x, convert(290, 499, x, y,scale).y,
+//		 angle_to_radian(122, 50, 28.32), angle_to_radian(223, 27, 28.35));//前加减小 后减减小
+//	 //29 
+//	 //X=0.294米  Y=0.533米 X=0.280米  Y=0.540米  X=0.273米  Y=0.561米 257度43分39.66秒 174度6分13.43秒
+//	 Cirthree(convert(294, 533, x, y,scale).x, convert(294, 533, x, y,scale).y, convert(280, 540, x, y,scale).x, convert(280, 540, x, y,scale).y, convert(273, 561, x, y,scale).x, convert(273, 561, x, y,scale).y,
+//		 angle_to_radian(257, 43, 39.66), angle_to_radian(174, 6, 13.43));//前加减小 后减减小
+//	 //30 
+//	 // X=0.285米  Y=0.519米  X=0.270米  Y=0.516米   X=0.259米  Y=0.521米 297度57分10.55秒 235度54分32.11秒
+//	 Cirthree(convert(285, 519, x, y,scale).x, convert(285, 519, x, y,scale).y, convert(270, 516, x, y,scale).x, convert(270, 516, x, y,scale).y, convert(259, 521, x, y,scale).x, convert(259, 521, x, y,scale).y,
+//		 angle_to_radian(297, 57, 10.55), angle_to_radian(235, 54, 32.11) + 0.2);//前加减小 后减减小
+//	 //31
+//	 // X=0.280米  Y=0.540米  X=0.268米  Y=0.534米  X=0.259米  Y=0.521米 103度26分12.32秒 162度30分12.91秒
+//	 Cirthree(convert(280, 540, x, y,scale).x, convert(280, 540, x, y,scale).y, convert(268, 534, x, y,scale).x, convert(268, 534, x, y,scale).y, convert(259, 521, x, y,scale).x, convert(259, 521, x, y,scale).y,
+//		 angle_to_radian(103, 26, 12.32), angle_to_radian(162, 30, 12.91));//前加减小 后减减小
+// }
+// /// <summary>
+///// 填充脚丫颜色
+///// </summary>
+///// <param name="x">指定坐标X</param>
+///// <param name="y">指定坐标Y</param>
+///// <param name="r">R</param>
+///// <param name="g">G</param>
+///// <param name="b">B</param>
+// void FillFoots(int x, int y, COLORREF rgb,double scale) {
+//	 setlinestyle(PS_SOLID, 3);
+//	 //设置线色
+//	 setlinecolor(rgb);
+//
+//	 //左脚
+//		 // X=0.102米  Y=0.353 X=0.095米  Y=0.352米 X=0.090米  Y=0.363米  297度41分28.87秒 161度26分56.78秒
+//	 Cirthree(convert(102, 353, x, y,scale).x, convert(102, 353, x, y,scale).y, convert(95, 352, x, y,scale).x, convert(95, 352, x, y,scale).y, convert(90, 363, x, y,scale).x, convert(90, 363, x, y,scale).y,
+//		 angle_to_radian(297, 41, 28.87), angle_to_radian(161, 26, 56.78));//前加减小 后减减小
+//	 // X=0.102米  Y=0.353  X=0.098米  Y=0.362米 X=0.090米  Y=0.363米 352度46分12.08秒 106度22分13.57秒
+//	 Cirthree(convert(102, 353, x, y,scale).x, convert(102, 353, x, y,scale).y, convert(98, 362, x, y,scale).x, convert(98, 362, x, y,scale).y, convert(90, 363, x, y,scale).x, convert(90, 363, x, y,scale).y,
+//		 angle_to_radian(352, 46, 12.08), angle_to_radian(106, 22, 13.57) - 0.3);//前加减小 后减减小
+//	 // X=0.096米  Y=0.358米
+//	 BoundaryFill(convert(96, 358, x, y,scale).x, convert(96, 358, x, y,scale).y, rgb);
+//	 Sleep(100);
+//
+//	 // X=0.116米  Y=0.362米 X=0.108米  Y=0.360米  X=0.101米  Y=0.367米  317度39分8.35秒 187度5分41.70秒
+//	 Cirthree(convert(116, 362, x, y,scale).x, convert(116, 362, x, y,scale).y, convert(108, 360, x, y,scale).x, convert(108, 360, x, y,scale).y, convert(101, 367, x, y,scale).x, convert(101, 367, x, y,scale).y,
+//		 angle_to_radian(317, 39, 8.35), angle_to_radian(187, 5, 41.7) - 0.3);//前加减小 后减减小
+//	 // X=0.116米  Y=0.362米  X=0.111米  Y=0.369米 X=0.101米  Y=0.367米  X=0.101米  Y=0.367米=8度17分27.46秒  =136度27分22.58秒
+//	 Cirthree(convert(116, 362, x, y,scale).x, convert(116, 362, x, y,scale).y, convert(111, 369, x, y,scale).x, convert(111, 369, x, y,scale).y, convert(101, 367, x, y,scale).x, convert(101, 367, x, y,scale).y,
+//		 angle_to_radian(8, 17, 27.46), angle_to_radian(136, 27, 22.58));//前加减小 后减减小
+//	 //X=0.108米  Y=0.365米
+//	 BoundaryFill(convert(108, 365, x, y,scale).x, convert(108, 365, x, y,scale).y, rgb);
+//	 Sleep(100);
+//
+//	 //X=0.117米  Y=0.376米   X=0.109米  Y=0.372米  X=0.101米  Y=0.381米 329度10分9.96秒 181度22分7.37秒
+//	 Cirthree(convert(117, 376, x, y,scale).x, convert(117, 376, x, y,scale).y, convert(109, 372, x, y,scale).x, convert(109, 372, x, y,scale).y, convert(101, 381, x, y,scale).x, convert(101, 381, x, y,scale).y,
+//		 angle_to_radian(329, 10, 9.96), angle_to_radian(181, 22, 7.37));//前加减小 后减减小
+//	 //X=0.117米  Y=0.376米   X=0.111米  Y=0.383米  X=0.101米  Y=0.381米 15度26分31.36秒 135度5分45.98秒
+//	 Cirthree(convert(117, 376, x, y,scale).x, convert(117, 376, x, y,scale).y, convert(111, 383, x, y,scale).x, convert(111, 383, x, y,scale).y, convert(101, 381, x, y,scale).x, convert(101, 381, x, y,scale).y,
+//		 angle_to_radian(15, 26, 31.36), angle_to_radian(135, 5, 45.98));//前加减小 后减减小
+//	 // X=0.108米  Y=0.378米 
+//	 BoundaryFill(convert(108, 378, x, y,scale).x, convert(108, 378, x, y,scale).y, rgb);
+//	 Sleep(100);
+//
+//	 //X=0.096米  Y=0.372米 X=0.087米  Y=0.370米  X=0.074米  Y=0.386米 299度3分38.35秒 171度38分8.91秒
+//	 Cirthree(convert(96, 372, x, y,scale).x, convert(96, 372, x, y,scale).y, convert(87, 370, x, y,scale).x, convert(87, 370, x, y,scale).y, convert(74, 386, x, y,scale).x, convert(74, 386, x, y,scale).y,
+//		 angle_to_radian(299, 3, 38.35), angle_to_radian(171, 38, 8.91));//前加减小 后减减小
+//	 //X=0.096米  Y=0.372米 X=0.090米  Y=0.387米   X=0.074米  Y=0.386米  343度40分27.29秒 127度1分19.97秒
+//	 Cirthree(convert(96, 372, x, y,scale).x, convert(96, 372, x, y,scale).y, convert(90, 387, x, y,scale).x, convert(90, 387, x, y,scale).y, convert(74, 386, x, y,scale).x, convert(74, 386, x, y,scale).y,
+//		 angle_to_radian(343, 40, 27.29), angle_to_radian(127, 1, 19.97));//前加减小 后减减小
+//	 //  X=0.084米  Y=0.379米
+//	 BoundaryFill(convert(84, 379, x, y,scale).x, convert(84, 379, x, y,scale).y,rgb);
+//	 Sleep(100);
+//
+//	 //右脚
+//	 //  X=0.116米  Y=0.642米   X=0.111米  Y=0.636米   X=0.101米  Y=0.638米 341度40分12.79秒 222度43分32.33秒
+//	 Cirthree(convert(116, 642, x, y,scale).x, convert(116, 642, x, y,scale).y, convert(111, 636, x, y,scale).x, convert(111, 636, x, y,scale).y, convert(101, 638, x, y,scale).x, convert(101, 638, x, y,scale).y,
+//		 angle_to_radian(341, 40, 12.79), angle_to_radian(222, 43, 32.33));//前加减小 后减减小
+//	 //X=0.116米  Y=0.642米   X=0.105米  Y=0.645米   X=0.101米  Y=0.638米 29度17分54.10秒 175度5分51.02秒
+//	 Cirthree(convert(116, 642, x, y,scale).x, convert(116, 642, x, y,scale).y, convert(105, 645, x, y,scale).x, convert(105, 645, x, y,scale).y, convert(101, 638, x, y,scale).x, convert(101, 638, x, y,scale).y,
+//		 angle_to_radian(29, 17, 54.1), angle_to_radian(175, 5, 51.02));//前加减小 后减减小
+//	 // X=0.108米  Y=0.639米 
+//	 BoundaryFill(convert(108, 639, x, y,scale).x, convert(108, 639, x, y,scale).y, rgb);
+//	 Sleep(100);
+//
+//	 // X=0.115米  Y=0.659米 X=0.109米  Y=0.649米 X=0.101米  Y=0.651米 11度34分2.18秒 226度10分24.04秒
+//	 Cirthree(convert(115, 659, x, y,scale).x, convert(115, 659, x, y,scale).y, convert(109, 649, x, y,scale).x, convert(109, 649, x, y,scale).y, convert(101, 651, x, y,scale).x, convert(101, 651, x, y,scale).y,
+//		 angle_to_radian(11, 34, 2.18), angle_to_radian(226, 10, 24.04));//前加减小 后减减小
+//	 //X=0.115米  Y=0.659米  X=0.105米  Y=0.658米 X=0.101米  Y=0.651米 61度48分24.44秒 175度56分1.78秒
+//	 Cirthree(convert(115, 659, x, y,scale).x, convert(115, 659, x, y,scale).y, convert(105, 658, x, y,scale).x, convert(105, 658, x, y,scale).y, convert(101, 651, x, y,scale).x, convert(101, 651, x, y,scale).y,
+//		 angle_to_radian(61, 48, 24.44), angle_to_radian(175, 59, 1.78));//前加减小 后减减小
+//	 //  X=0.110米  Y=0.653米
+//	 BoundaryFill(convert(110, 653, x, y,scale).x, convert(110, 653, x, y,scale).y,rgb);
+//	 Sleep(100);
+//
+//	 // X=0.103米  Y=0.665米  X=0.096米  Y=0.656米  X=0.091米  Y=0.657米 7度6分59.98秒 242度31分15.10秒
+//	 Cirthree(convert(103, 665, x, y,scale).x, convert(103, 665, x, y,scale).y, convert(96, 656, x, y,scale).x, convert(96, 656, x, y,scale).y, convert(91, 657, x, y,scale).x, convert(91, 657, x, y,scale).y,
+//		 angle_to_radian(7, 6, 59.98), angle_to_radian(242, 31, 15.1));//前加减小 后减减小
+//	 //X=0.103米  Y=0.665米  X=0.098米  Y=0.667米  X=0.091米  Y=0.657米 57度19分9.55秒 192度19分5.54秒
+//	 Cirthree(convert(103, 665, x, y,scale).x, convert(103, 665, x, y,scale).y, convert(98, 667, x, y,scale).x, convert(98, 667, x, y,scale).y, convert(91, 657, x, y,scale).x, convert(91, 657, x, y,scale).y,
+//		 angle_to_radian(57, 19, 9.55), angle_to_radian(192, 19, 5.54));//前加减小 后减减小
+//		 //  X=0.095米  Y=0.659米
+//	 BoundaryFill(convert(95, 659, x, y,scale).x, convert(95, 659, x, y,scale).y,rgb);
+//	 Sleep(100);
+//
+//	 //  X=0.096米  Y=0.648米  X=0.085米  Y=0.630米  X=0.074米  Y=0.632米 13度3分12.91秒 239度15分54.89秒
+//	 Cirthree(convert(96, 648, x, y,scale).x, convert(96, 648, x, y,scale).y, convert(85, 630, x, y,scale).x, convert(85, 630, x, y,scale).y, convert(74, 632, x, y,scale).x, convert(74, 632, x, y,scale).y,
+//		 angle_to_radian(13, 3, 12.91), angle_to_radian(239, 15, 54.89));//前加减小 后减减小
+//	 //X=0.096米  Y=0.648米  X=0.087米  Y=0.650米   X=0.074米  Y=0.632米 59度0分34.03秒 193度18分33.76秒
+//	 Cirthree(convert(96, 648, x, y,scale).x, convert(96, 648, x, y,scale).y, convert(87, 650, x, y,scale).x, convert(87, 650, x, y,scale).y, convert(74, 632, x, y,scale).x, convert(74, 632, x, y,scale).y,
+//		 angle_to_radian(59, 0, 34.03), angle_to_radian(193, 18, 33.76));//前加减小 后减减小
+//	 //  X=0.090米  Y=0.642米
+//	 BoundaryFill(convert(90, 642, x, y,scale).x, convert(90, 642, x, y,scale).y, rgb);
+// }
  /// <summary>
  /// 设置色卡
  /// </summary>
@@ -1604,16 +1583,23 @@ int BoundaryFill(int x, int y, COLORREF rgb)
 	 y += height;
  }
  /// <summary>
- /// 游戏开始
+ /// 开始填色游戏
  /// </summary>
- /// <param name="x">指定横坐标</param>
- /// <param name="y">指定纵坐标</param>
- void GameStart(int x,int y, double scale) {
+ /// <param name="x">绘图指定坐标X</param>
+ /// <param name="y">绘图指定坐标Y</param>
+ /// <param name="bk">背景色</param>
+ /// <param name="scale">缩放比例</param>
+ void GameStart(int x, int y, COLORREF bk, double scale) {
+	 TCHAR s111[] = _T("重新选色");
+	 TCHAR s122[] = _T("退出填色");
+	 SetButton({ 650,620 }, { 750,670 }, s111);
+	 SetButton({ 950,620 }, { 1050,670 }, s122);
 	 settextcolor(RGB(241, 149, 108));
 	 settextstyle(40, 0, _T("楷体"));
+	 COLORREF c;//用于存储拾取颜色
 	 TCHAR s1[] = _T("填色游戏");
 	 outtextxy(200, 30, s1);
-	 Sleep(2000);
+	 Sleep(1000);
 	 DelText();
 	 settextcolor(RGB(241, 149, 108));
 	 settextstyle(40, 0, _T("楷体"));
@@ -1624,271 +1610,454 @@ int BoundaryFill(int x, int y, COLORREF rgb)
 	 int off = 0;//判断是否左键单击 0为没有 1位有
 	 FlushMouseMsgBuffer();
 	 // 获取一条鼠标消息
-	 while (true)
-	 {
+		 while (true)
+		 {
+			 // 获取一条鼠标消息
+			 m = GetMouseMsg();
+			 switch (m.uMsg)
+			 {
+			 case WM_LBUTTONDOWN:
+				 DelText();
+				 settextcolor(RGB(241, 149, 108));
+				 settextstyle(40, 0, _T("楷体"));
+				 outtextxy(10, 30, s3);
+				 off = 1;
+				 break;
+			 case WM_RBUTTONUP:
+				 ;	// 按鼠标右键退出程序
+			 }
+			 if (off == 1)
+			 {
+				 break;//退出获取鼠标事件
+			 }
+		 }
+		 Sleep(1000);
+		 for (; ; )
+		 {
+		 off = 0;
+		 DelText();
+		 TCHAR s4[] = _T("请选择右方颜色");
+		 settextcolor(RGB(241, 149, 108));
+		 settextstyle(40, 0, _T("楷体"));
+		 outtextxy(150, 30, s4);
+		 FlushMouseMsgBuffer();
 		 // 获取一条鼠标消息
-		 m = GetMouseMsg();
-		 switch (m.uMsg)
+		 while (true)
 		 {
-		 case WM_LBUTTONDOWN:
-			 DelText();
-			 settextcolor(RGB(241, 149, 108));
-			 settextstyle(40, 0, _T("楷体"));
-			 outtextxy(10, 30, s3);
-			 off = 1;
-			 break;
-		 case WM_RBUTTONUP:
-			 ;	// 按鼠标右键退出程序
+			 // 获取一条鼠标消息
+			 m = GetMouseMsg();
+			 switch (m.uMsg)
+			 {
+			 case WM_LBUTTONDOWN:
+				 //重新选色
+				 if (JustIn({ 650,620 }, { 750,670 }, { m.x,m.y }))
+				 {
+					 DelText();
+					 TCHAR s4[] = _T("请重新选择右方颜色");
+					 settextcolor(RGB(241, 149, 108));
+					 settextstyle(40, 0, _T("楷体"));
+					 outtextxy(150, 30, s4);
+					 FlushMouseMsgBuffer();
+					 // 获取一条鼠标消息
+					 //while (true)
+					 //{
+						// // 获取一条鼠标消息
+						// m = GetMouseMsg();
+						// switch (m.uMsg)
+						// {
+						// case WM_LBUTTONDOWN:
+						/*	 DelText();*/
+							 c = getpixel(m.x, m.y);
+							 off = 1;
+							 break;
+						// case WM_RBUTTONUP:
+						//	 ;	// 按鼠标右键退出程序
+						// }
+						// if (off == 1)
+						// {
+						//	 break;//退出获取鼠标事件
+						// }
+					 //}
+					 //off = 0;
+					 //break;
+				 }
+
+				 //结束涂色
+				 if (JustIn({ 950,620 }, { 1050,670 }, { m.x,m.y }))
+				 {
+					 DelText();
+					 TCHAR s12[] = _T("点击鼠标继续");
+					 settextcolor(RGB(241, 149, 108));
+					 settextstyle(40, 0, _T("楷体"));
+					 outtextxy(150, 30, s12);
+					 off = 0;
+					 TCHAR s13[] = _T("真棒！极乐净土送给你");
+					 settextcolor(RGB(241, 149, 108));
+					 settextstyle(40, 0, _T("楷体"));
+					 FlushMouseMsgBuffer();
+					 // 获取一条鼠标消息
+					 while (true)
+					 {
+						 // 获取一条鼠标消息
+						 m = GetMouseMsg();
+						 switch (m.uMsg)
+						 {
+						 case WM_LBUTTONDOWN:
+							 DelText();
+							 outtextxy(150, 30, s13);
+							 off = 1;
+							 break;
+						 case WM_RBUTTONUP:
+							 ;	// 按鼠标右键退出程序
+						 }
+						 if (off == 1)
+						 {
+							 break;//退出获取鼠标事件
+						 }
+					 }
+					 Sleep(1000);
+					 closegraph();
+					 Play();
+				 }
+				 else
+				 {
+					 DelText();
+					 c = getpixel(m.x, m.y);
+					 off = 1;
+					 break;
+				 }
+			 case WM_RBUTTONUP:
+				 ;	// 按鼠标右键退出程序
+			 }
+			 if (off == 1)
+			 {
+				 break;//退出获取鼠标事件
+			 }
 		 }
-		 if (off==1)
-		 {
-			 break;//退出获取鼠标事件
-		 }
-	 }
-	 Sleep(2000);
-	 off = 0;
-	 DelText();
-	 TCHAR s4[] = _T("请选择耳朵的颜色");
-	 settextcolor(RGB(241, 149, 108));
-	 settextstyle(40, 0, _T("楷体"));
-	 outtextxy(150, 30, s4);
-	 FlushMouseMsgBuffer();
-	 // 获取一条鼠标消息
-	 while (true)
-	 {
+		 off = 0;
+		 TCHAR s5[] = _T("请选择填充的位置");
+		 settextcolor(RGB(241, 149, 108));
+		 settextstyle(40, 0, _T("楷体"));
+		 outtextxy(150, 30, s5);
+		 FlushMouseMsgBuffer();
 		 // 获取一条鼠标消息
-		 m = GetMouseMsg();
-		 switch (m.uMsg)
+		 while (true)
 		 {
-		 case WM_LBUTTONDOWN:
-			 DelText();
-			 FillLeftEar(x,y,getpixel(m.x,m.y),scale);			
-			Sleep(100);
-			FillRightEar(x, y, getpixel(m.x, m.y), scale);
-			off = 1;
-			break;
-		 case WM_RBUTTONUP:
-			 ;	// 按鼠标右键退出程序
+			 // 获取一条鼠标消息
+			 m = GetMouseMsg();
+			 switch (m.uMsg)
+			 {
+			 case WM_LBUTTONDOWN:
+				 //重新选色
+				 if (JustIn({ 650,620 }, { 750,670 }, { m.x,m.y }))
+				 {
+					 DelText();
+					 TCHAR s4[] = _T("请重新选择右方颜色");
+					 settextcolor(RGB(241, 149, 108));
+					 settextstyle(40, 0, _T("楷体"));
+					 outtextxy(150, 30, s4);
+					 FlushMouseMsgBuffer();
+					 // 获取一条鼠标消息
+					 //while (true)
+					 //{
+						// // 获取一条鼠标消息
+						// m = GetMouseMsg();
+						// switch (m.uMsg)
+						// {
+						// case WM_LBUTTONDOWN:
+							/* DelText();*/
+							 c = getpixel(m.x, m.y);
+							 off = 1;
+							 break;
+						// case WM_RBUTTONUP:
+						//	 ;	// 按鼠标右键退出程序
+						// }
+						// if (off == 1)
+						// {
+						//	 break;//退出获取鼠标事件
+						// }
+					 //}
+					 //off = 0;
+					 //break;
+				 }
+
+				 //结束涂色
+				 if (JustIn({ 950,620 }, { 1050,670 }, { m.x,m.y }))
+				 {
+					 DelText();
+					 TCHAR s12[] = _T("点击鼠标继续");
+					 settextcolor(RGB(241, 149, 108));
+					 settextstyle(40, 0, _T("楷体"));
+					 outtextxy(150, 30, s12);
+					 off = 0;
+					 TCHAR s13[] = _T("真棒！极乐净土送给你");
+					 settextcolor(RGB(241, 149, 108));
+					 settextstyle(40, 0, _T("楷体"));
+					 FlushMouseMsgBuffer();
+					 // 获取一条鼠标消息
+					 while (true)
+					 {
+						 // 获取一条鼠标消息
+						 m = GetMouseMsg();
+						 switch (m.uMsg)
+						 {
+						 case WM_LBUTTONDOWN:
+							 if (JustIn({ 650,620 }, { 750,670 }, { m.x,m.y }))
+							 {
+								 DelText();
+								 TCHAR s4[] = _T("请重新选择右方颜色");
+								 settextcolor(RGB(241, 149, 108));
+								 settextstyle(40, 0, _T("楷体"));
+								 outtextxy(150, 30, s4);
+								 FlushMouseMsgBuffer();
+								 // 获取一条鼠标消息
+								 //while (true)
+								 //{
+									// // 获取一条鼠标消息
+									// m = GetMouseMsg();
+									// switch (m.uMsg)
+									// {
+									// case WM_LBUTTONDOWN:
+									/*	 DelText();*/
+								 c = getpixel(m.x, m.y);
+								 off = 1;
+								 break;
+								 // case WM_RBUTTONUP:
+								 //	 ;	// 按鼠标右键退出程序
+								 // }
+								 // if (off == 1)
+								 // {
+								 //	 break;//退出获取鼠标事件
+								 // }
+							  //}
+							  //off = 0;
+							  //break;
+							 }
+							 else
+							 {
+								 DelText();
+								 outtextxy(150, 30, s13);
+								 off = 1;
+								 break;
+							 }
+						 case WM_RBUTTONUP:
+							 ;	// 按鼠标右键退出程序
+						 }
+						 if (off == 1)
+						 {
+							 break;//退出获取鼠标事件
+						 }
+					 }
+					 Sleep(1000);
+					 closegraph();
+					 Play();
+				 }
+
+
+				 else
+				 {
+					 DelText();
+					 Scan(m.x, m.y, bk, c);
+					 off = 1;
+					 break;
+				 }
+			 case WM_RBUTTONUP:
+				 ;	// 按鼠标右键退出程序
+			 }
+			 if (off == 1)
+			 {
+				 break;//退出获取鼠标事件
+			 }
 		 }
-		 if (off == 1)
-		 {
-			 break;//退出获取鼠标事件
-		 }
+		 //取消选中颜色
+		 //设置两个框 一个用于取消选色 一个用于退出涂色
+
+
+
+
+		 //off = 0;
+		 //TCHAR s6[] = _T("请选择脸颊的颜色");
+		 //settextcolor(RGB(241, 149, 108));
+		 //settextstyle(40, 0, _T("楷体"));
+		 //outtextxy(150, 30, s6);
+		 //FlushMouseMsgBuffer();
+		 //// 获取一条鼠标消息
+		 //while (true)
+		 //{
+			// // 获取一条鼠标消息
+			// m = GetMouseMsg();
+			// switch (m.uMsg)
+			// {
+			// case WM_LBUTTONDOWN:
+			//	 DelText();
+			//	 off = 1;
+			//	 break;
+			// case WM_RBUTTONUP:
+			//	 ;	// 按鼠标右键退出程序
+			// }
+			// if (off == 1)
+			// {
+			//	 break;//退出获取鼠标事件
+			// }
+		 //}
+		 //off = 0;
+		 //TCHAR s7[] = _T("请选择鼻子的颜色");
+		 //settextcolor(RGB(241, 149, 108));
+		 //settextstyle(40, 0, _T("楷体"));
+		 //outtextxy(150, 30, s7);
+		 //FlushMouseMsgBuffer();
+		 //// 获取一条鼠标消息
+		 //while (true)
+		 //{
+			// // 获取一条鼠标消息
+			// m = GetMouseMsg();
+			// switch (m.uMsg)
+			// {
+			// case WM_LBUTTONDOWN:
+			//	 DelText();
+			//	 off = 1;
+			//	 break;
+			// case WM_RBUTTONUP:
+			//	 ;	// 按鼠标右键退出程序
+			// }
+			// if (off == 1)
+			// {
+			//	 break;//退出获取鼠标事件
+			// }
+		 //}
+		 //off = 0;
+		 //TCHAR s8[] = _T("请选择嘴巴的颜色");
+		 //settextcolor(RGB(241, 149, 108));
+		 //settextstyle(40, 0, _T("楷体"));
+		 //outtextxy(150, 30, s8);
+		 //FlushMouseMsgBuffer();
+		 //// 获取一条鼠标消息
+		 //while (true)
+		 //{
+			// // 获取一条鼠标消息
+			// m = GetMouseMsg();
+			// switch (m.uMsg)
+			// {
+			// case WM_LBUTTONDOWN:
+			//	 DelText();
+			//	 off = 1;
+			//	 break;
+			// case WM_RBUTTONUP:
+			//	 ;	// 按鼠标右键退出程序
+			// }
+			// if (off == 1)
+			// {
+			//	 break;//退出获取鼠标事件
+			// }
+		 //}
+		 //off = 0;
+		 //TCHAR s9[] = _T("请选择胡萝卜的颜色");
+		 //settextcolor(RGB(241, 149, 108));
+		 //settextstyle(40, 0, _T("楷体"));
+		 //outtextxy(150, 30, s9);
+		 //FlushMouseMsgBuffer();
+		 //// 获取一条鼠标消息
+		 //while (true)
+		 //{
+			// // 获取一条鼠标消息
+			// m = GetMouseMsg();
+			// switch (m.uMsg)
+			// {
+			// case WM_LBUTTONDOWN:
+			//	 DelText();
+			//	 off = 1;
+			//	 break;
+			// case WM_RBUTTONUP:
+			//	 ;	// 按鼠标右键退出程序
+			// }
+			// if (off == 1)
+			// {
+			//	 break;//退出获取鼠标事件
+			// }
+		 //}
+		 //off = 0;
+		 //TCHAR s10[] = _T("请选择绿叶的颜色");
+		 //settextcolor(RGB(241, 149, 108));
+		 //settextstyle(40, 0, _T("楷体"));
+		 //outtextxy(150, 30, s10);
+		 //FlushMouseMsgBuffer();
+		 //// 获取一条鼠标消息
+		 //while (true)
+		 //{
+			// // 获取一条鼠标消息
+			// m = GetMouseMsg();
+			// switch (m.uMsg)
+			// {
+			// case WM_LBUTTONDOWN:
+			//	 DelText();
+			//	 off = 1;
+			//	 break;
+			// case WM_RBUTTONUP:
+			//	 ;	// 按鼠标右键退出程序
+			// }
+			// if (off == 1)
+			// {
+			//	 break;//退出获取鼠标事件
+			// }
+		 //}
+		 //off = 0;
+		 //TCHAR s11[] = _T("请选择脚丫的颜色");
+		 //settextcolor(RGB(241, 149, 108));
+		 //settextstyle(40, 0, _T("楷体"));
+		 //outtextxy(150, 30, s11);
+		 //FlushMouseMsgBuffer();
+		 //// 获取一条鼠标消息
+		 //while (true)
+		 //{
+			// // 获取一条鼠标消息
+			// m = GetMouseMsg();
+			// switch (m.uMsg)
+			// {
+			// case WM_LBUTTONDOWN:
+			//	 off = 1;
+			//	 break;
+			// case WM_RBUTTONUP:
+			//	 ;	// 按鼠标右键退出程序
+			// }
+			// if (off == 1)
+			// {
+			//	 break;//退出获取鼠标事件
+			// }
+		 //}
+		 //DelText();
+		 //TCHAR s12[] = _T("点击鼠标继续");
+		 //settextcolor(RGB(241, 149, 108));
+		 //settextstyle(40, 0, _T("楷体"));
+		 //outtextxy(150, 30, s12);
+		 //off = 0;
+		 //TCHAR s13[] = _T("真棒！极乐净土送给你");
+		 //settextcolor(RGB(241, 149, 108));
+		 //settextstyle(40, 0, _T("楷体"));
+		 //FlushMouseMsgBuffer();
+		 //// 获取一条鼠标消息
+		 //while (true)
+		 //{
+			// // 获取一条鼠标消息
+			// m = GetMouseMsg();
+			// switch (m.uMsg)
+			// {
+			// case WM_LBUTTONDOWN:
+			//	 DelText();		
+			//	 outtextxy(150, 30, s13);
+			//	 off = 1;
+			//	 break;
+			// case WM_RBUTTONUP:
+			//	 ;	// 按鼠标右键退出程序
+			// }
+			// if (off == 1)
+			// {
+			//	 break;//退出获取鼠标事件
+			// }
+		 //}
+		 //Sleep(1000);
+		 //closegraph();
+		 //Play();
 	 }
-	 off = 0;
-	 TCHAR s5[] = _T("请选择眼睛的颜色");
-	 settextcolor(RGB(241, 149, 108));
-	 settextstyle(40, 0, _T("楷体"));
-	 outtextxy(150, 30, s5);
-	 FlushMouseMsgBuffer();
-	 // 获取一条鼠标消息
-	 while (true)
-	 {
-		 // 获取一条鼠标消息
-		 m = GetMouseMsg();
-		 switch (m.uMsg)
-		 {
-		 case WM_LBUTTONDOWN:
-			 DelText();
-			 FillEyes(x, y, getpixel(m.x, m.y), scale);
-			 off = 1;
-			 break;
-		 case WM_RBUTTONUP:
-			 ;	// 按鼠标右键退出程序
-		 }
-		 if (off == 1)
-		 {
-			 break;//退出获取鼠标事件
-		 }
-	 }
-	 off = 0;
-	 TCHAR s6[] = _T("请选择脸颊的颜色");
-	 settextcolor(RGB(241, 149, 108));
-	 settextstyle(40, 0, _T("楷体"));
-	 outtextxy(150, 30, s6);
-	 FlushMouseMsgBuffer();
-	 // 获取一条鼠标消息
-	 while (true)
-	 {
-		 // 获取一条鼠标消息
-		 m = GetMouseMsg();
-		 switch (m.uMsg)
-		 {
-		 case WM_LBUTTONDOWN:
-			 DelText();
-			 FillCheeks(x, y, getpixel(m.x, m.y), scale);
-			 off = 1;
-			 break;
-		 case WM_RBUTTONUP:
-			 ;	// 按鼠标右键退出程序
-		 }
-		 if (off == 1)
-		 {
-			 break;//退出获取鼠标事件
-		 }
-	 }
-	 off = 0;
-	 TCHAR s7[] = _T("请选择鼻子的颜色");
-	 settextcolor(RGB(241, 149, 108));
-	 settextstyle(40, 0, _T("楷体"));
-	 outtextxy(150, 30, s7);
-	 FlushMouseMsgBuffer();
-	 // 获取一条鼠标消息
-	 while (true)
-	 {
-		 // 获取一条鼠标消息
-		 m = GetMouseMsg();
-		 switch (m.uMsg)
-		 {
-		 case WM_LBUTTONDOWN:
-			 DelText();
-			 FillNose(x, y, getpixel(m.x, m.y), scale);
-			 off = 1;
-			 break;
-		 case WM_RBUTTONUP:
-			 ;	// 按鼠标右键退出程序
-		 }
-		 if (off == 1)
-		 {
-			 break;//退出获取鼠标事件
-		 }
-	 }
-	 off = 0;
-	 TCHAR s8[] = _T("请选择嘴巴的颜色");
-	 settextcolor(RGB(241, 149, 108));
-	 settextstyle(40, 0, _T("楷体"));
-	 outtextxy(150, 30, s8);
-	 FlushMouseMsgBuffer();
-	 // 获取一条鼠标消息
-	 while (true)
-	 {
-		 // 获取一条鼠标消息
-		 m = GetMouseMsg();
-		 switch (m.uMsg)
-		 {
-		 case WM_LBUTTONDOWN:
-			 DelText();
-			 FillMouth(x, y, getpixel(m.x, m.y), scale);
-			 off = 1;
-			 break;
-		 case WM_RBUTTONUP:
-			 ;	// 按鼠标右键退出程序
-		 }
-		 if (off == 1)
-		 {
-			 break;//退出获取鼠标事件
-		 }
-	 }
-	 off = 0;
-	 TCHAR s9[] = _T("请选择胡萝卜的颜色");
-	 settextcolor(RGB(241, 149, 108));
-	 settextstyle(40, 0, _T("楷体"));
-	 outtextxy(150, 30, s9);
-	 FlushMouseMsgBuffer();
-	 // 获取一条鼠标消息
-	 while (true)
-	 {
-		 // 获取一条鼠标消息
-		 m = GetMouseMsg();
-		 switch (m.uMsg)
-		 {
-		 case WM_LBUTTONDOWN:
-			 DelText();
-			 FillCarrot(x, y, getpixel(m.x, m.y), scale);
-			 off = 1;
-			 break;
-		 case WM_RBUTTONUP:
-			 ;	// 按鼠标右键退出程序
-		 }
-		 if (off == 1)
-		 {
-			 break;//退出获取鼠标事件
-		 }
-	 }
-	 off = 0;
-	 TCHAR s10[] = _T("请选择绿叶的颜色");
-	 settextcolor(RGB(241, 149, 108));
-	 settextstyle(40, 0, _T("楷体"));
-	 outtextxy(150, 30, s10);
-	 FlushMouseMsgBuffer();
-	 // 获取一条鼠标消息
-	 while (true)
-	 {
-		 // 获取一条鼠标消息
-		 m = GetMouseMsg();
-		 switch (m.uMsg)
-		 {
-		 case WM_LBUTTONDOWN:
-			 DelText();
-			 FillLeaf(x, y, getpixel(m.x, m.y), scale);
-			 off = 1;
-			 break;
-		 case WM_RBUTTONUP:
-			 ;	// 按鼠标右键退出程序
-		 }
-		 if (off == 1)
-		 {
-			 break;//退出获取鼠标事件
-		 }
-	 }
-	 off = 0;
-	 TCHAR s11[] = _T("请选择脚丫的颜色");
-	 settextcolor(RGB(241, 149, 108));
-	 settextstyle(40, 0, _T("楷体"));
-	 outtextxy(150, 30, s11);
-	 FlushMouseMsgBuffer();
-	 // 获取一条鼠标消息
-	 while (true)
-	 {
-		 // 获取一条鼠标消息
-		 m = GetMouseMsg();
-		 switch (m.uMsg)
-		 {
-		 case WM_LBUTTONDOWN:
-			 FillFoots(x, y, getpixel(m.x, m.y), scale);
-			 off = 1;
-			 break;
-		 case WM_RBUTTONUP:
-			 ;	// 按鼠标右键退出程序
-		 }
-		 if (off == 1)
-		 {
-			 break;//退出获取鼠标事件
-		 }
-	 }
-	 DelText();
-	 TCHAR s12[] = _T("点击鼠标继续");
-	 settextcolor(RGB(241, 149, 108));
-	 settextstyle(40, 0, _T("楷体"));
-	 outtextxy(150, 30, s12);
-	 off = 0;
-	 TCHAR s13[] = _T("真棒！极乐净土送给你");
-	 settextcolor(RGB(241, 149, 108));
-	 settextstyle(40, 0, _T("楷体"));
-	 FlushMouseMsgBuffer();
-	 // 获取一条鼠标消息
-	 while (true)
-	 {
-		 // 获取一条鼠标消息
-		 m = GetMouseMsg();
-		 switch (m.uMsg)
-		 {
-		 case WM_LBUTTONDOWN:
-			 DelText();		
-			 outtextxy(150, 30, s13);
-			 off = 1;
-			 break;
-		 case WM_RBUTTONUP:
-			 ;	// 按鼠标右键退出程序
-		 }
-		 if (off == 1)
-		 {
-			 break;//退出获取鼠标事件
-		 }
-	 }
-	 Sleep(1000);
-	 closegraph();
-	 Play();
  }
  void DelText() {
 	 //消除字体
@@ -1899,7 +2068,7 @@ int BoundaryFill(int x, int y, COLORREF rgb)
  }
  int Play() {
 	 char fileName[128];
-
+	 char title[128];
 	 std::cout << "正在加载..." << std::endl;
 
 	 //预加载
@@ -1916,7 +2085,7 @@ int BoundaryFill(int x, int y, COLORREF rgb)
 
 	 while (1) {
 		 for (int i = 0; i < COUNT; i++) {
-			 putimage(0, 0, &images[i - 1]);
+			 putimage(0, 0, &images[i-1]);
 			 Sleep(75);
 		 }
 	 }
@@ -2105,4 +2274,113 @@ int BoundaryFill(int x, int y, COLORREF rgb)
 	 pt[0] = { xx,yy };
 	 return pt[0];
  }
+ /// <summary>
+/// 扫描填充
+/// </summary>
+/// <param name="x">坐标x</param>
+/// <param name="y">坐标y</param>
+/// <param name="bk">背景色</param>
+/// <param name="fk">填充色</param>
+ void Scan(int x, int y, COLORREF bk, COLORREF fk)
+ {
+	 int x1 = x; int y1 = y;
+	 if (getpixel(x1, y1) != bk)
+	 {
+		 putpixel(x1, y1, fk);
+	 }
+	 //向左扫
+	 for (--x1; ; --x1)
+	 {
+		 COLORREF c = 0;
+		 c = getpixel(x1, y1);
+		 if (c != bk)
+		 {
+			 putpixel(x1, y1, fk);
+		 }
+		 if (c == bk || c == fk)
+			 break;
+		 Scan(x1, y1, bk, fk);
+	 }
+	 int x2 = x; int y2 = y;
+	 //向右扫
+	 for (++x2; ; ++x2)
+	 {
+		 COLORREF c = 0;
+		 c = getpixel(x2, y2);
+		 if (c != bk)
+		 {
+			 putpixel(x2, y2, fk);
+		 }
+		 if (c == bk || c == fk)
+			 break;
+		 Scan(x2, y2, bk, fk);
+	 }
+	 int x3 = x; int y3 = y;
+	 //向上扫
+	 for (--y3; ; --y3)
+	 {
+		 COLORREF c = 0;
+		 c = getpixel(x3, y3);
+		 if (c != bk)
+		 {
+			 putpixel(x3, y3, fk);
+		 }
+		 if (c == bk || c == fk)
+			 break;
+		 Scan(x3, y3, bk, fk);
+	 }
+	 int x4 = x; int y4 = y;
+	 //向下扫
+	 for (++y4; ; ++y4)
+	 {
+		 COLORREF c = 0;
+		 c = getpixel(x4, y4);
+		 if (c != bk)
+		 {
+			 putpixel(x4, y4, fk);
+		 }
+		 if (c == bk || c == fk)
+			 break;
+		 Scan(x4, y4, bk, fk);
+	 }
+ }
+ /// <summary>
+ /// 设置点击按钮
+ /// </summary>
+ /// <param name="a">左上角坐标</param>
+ /// <param name="b">右下角坐标</param>
+ /// <param name="">命令名称</param>
+ void SetButton(POINT a, POINT b, TCHAR s1[]) {
 
+	 //绘制矩形框
+	 setfillcolor(RGB(255, 255, 255));
+	 POINT pts[] = { {a.x, a.y}, {b.x, a.y}, {b.x, b.y}, {a.x , b.y} };
+	 fillpolygon(pts, 4);
+
+	 //设置字体 黑色
+	 settextcolor(RGB(0,0,0));
+	 settextstyle(20,0,"新宋体");
+
+	 int width= textwidth(s1);//字符串宽度
+	 int height= textheight(s1);//字符串高度
+
+	 int distancex = (b.x - a.x - width) / 2;//x方向偏移量
+	 int distancey = (b.y - a.y - height) / 2;//Y方向偏移量
+	 outtextxy(a.x+distancex,a.y+distancey,s1);
+
+ }
+ /// <summary>
+ /// 判断点是否在指定区域
+ /// </summary>
+ /// <param name="a">指定区域左上角点</param>
+ /// <param name="b">指定区域右下角点</param>
+ /// <param name="c">被判断点</param>
+ /// <returns>1 为在 0为不在</returns>
+ int JustIn(POINT a,POINT b,POINT c) {
+	 if (c.x >= a.x && c.x <= b.x && c.y >= a.y && c.y <= b.y)
+		 return 1;
+	 else
+	 {
+		 return 0;
+	 }
+ }
